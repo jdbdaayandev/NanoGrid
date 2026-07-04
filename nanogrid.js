@@ -18,7 +18,7 @@ class NanoGrid {
       columnDefs: {},
       checkboxes: false,         
       rowIdField: 'id',          
-      fontSize: '0.875rem', // DITO NA LANG KOKONTROLIN ANG FONT SIZE!     
+      fontSize: '0.875rem',      
       processingText: 'Loading...',
       theme: 'light', 
       rowExpansion: null,
@@ -28,7 +28,6 @@ class NanoGrid {
     this.buildDOMStructure();
     this.applyTheme();
 
-    // 1. Inject Checkbox Header FIRST
     if (this.config.checkboxes && !this.table.querySelector('th[data-checkbox]')) {
       const thCb = document.createElement('th');
       thCb.setAttribute('data-checkbox', 'true');
@@ -37,7 +36,6 @@ class NanoGrid {
       this.table.querySelector('thead tr').insertAdjacentElement('afterbegin', thCb);
     }
     
-    // 2. Inject Expand Header SECOND (so it pushes to the absolute left)
     if ((this.config.rowExpansion || this.config.responsive) && !this.table.querySelector('th[data-expand]')) {
       const thExp = document.createElement('th');
       thExp.setAttribute('data-expand', 'true');
@@ -108,15 +106,24 @@ class NanoGrid {
   buildDOMStructure() {
     this.container = document.createElement('div');
     this.container.className = 'nanogrid-container';
-    
-    // Set the Font Size globally based on Config!
     this.container.style.setProperty('--ng-text-size', this.config.fontSize);
 
     this.tableWrapper = document.createElement('div');
     this.tableWrapper.className = 'nanogrid-table-wrapper';
     
+    this.overlay = document.createElement('div');
+    this.overlay.className = 'ng-loader-overlay';
+    this.overlay.innerHTML = `
+      <div style="display: flex; align-items: center; gap: 0.5rem; color: var(--ng-accent);">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="animation: ng-spin 1s linear infinite;"><path d="M21 12a9 9 0 1 1-6.219-8.56"></path></svg>
+        <span style="font-weight: 600;">${this.config.processingText}</span>
+      </div>
+    `;
+
     this.table.parentNode.insertBefore(this.container, this.table);
+    
     this.tableWrapper.appendChild(this.table);
+    this.tableWrapper.appendChild(this.overlay); 
     this.container.appendChild(this.tableWrapper);
     
     this.table.classList.add('nanogrid-table');
@@ -131,11 +138,28 @@ class NanoGrid {
       @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600&display=swap');
 
       :root {
-        --ng-bg: #ffffff; --ng-surface: #f8fafc; --ng-border: #e2e8f0; --ng-text-main: #334155; --ng-text-dark: #0f172a; --ng-text-muted: #64748b; --ng-accent: #4f46e5; --ng-accent-ring: rgba(79, 70, 229, 0.15); --ng-radius: 12px; --ng-radius-sm: 8px; --ng-font: 'Plus Jakarta Sans', sans-serif;
+        --ng-bg: #ffffff; 
+        --ng-surface: #f8fafc; 
+        --ng-border: #e2e8f0; 
+        --ng-text-main: #334155; 
+        --ng-text-dark: #0f172a; 
+        --ng-text-muted: #64748b; 
+        --ng-accent: #007bff; 
+        --ng-accent-ring: rgba(0, 123, 255, 0.15); 
+        --ng-radius: 8px; 
+        --ng-radius-sm: 6px; 
+        --ng-font: 'Plus Jakarta Sans', sans-serif;
       }
       
       .ng-dark {
-        --ng-bg: #0f172a; --ng-surface: #1e293b; --ng-border: #334155; --ng-text-main: #cbd5e1; --ng-text-dark: #f8fafc; --ng-text-muted: #94a3b8; --ng-accent: #6366f1; --ng-accent-ring: rgba(99, 102, 241, 0.15);
+        --ng-bg: #343a40; 
+        --ng-surface: #454d55; 
+        --ng-border: #4f5962; 
+        --ng-text-main: #e2e8f0; 
+        --ng-text-dark: #f8fafc; 
+        --ng-text-muted: #adb5bd; 
+        --ng-accent: #3b82f6; 
+        --ng-accent-ring: rgba(59, 130, 246, 0.2);
       }
 
       .nanogrid-container { font-family: var(--ng-font); color: var(--ng-text-main); width: 100%; display: flex; flex-direction: column; gap: 1rem; }
@@ -163,23 +187,31 @@ class NanoGrid {
       .ng-dropdown-item:hover { background: var(--ng-surface); color: var(--ng-text-dark); }
       .ng-dropdown-item.selected { background: var(--ng-accent-ring); color: var(--ng-accent); }
 
-      .nanogrid-table-wrapper { overflow-x: hidden; background: var(--ng-bg); border: 1px solid var(--ng-border); border-radius: var(--ng-radius); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); -webkit-overflow-scrolling: touch; }
-      .nanogrid-table { width: 100%; border-collapse: collapse; text-align: left; font-size: var(--ng-text-size); min-width: max-content; }
+      .nanogrid-table-wrapper { position: relative; overflow-x: auto; background: var(--ng-bg); border: 1px solid var(--ng-border); border-radius: var(--ng-radius); min-height: 150px; -webkit-overflow-scrolling: touch; }
       
-      .nanogrid-table th { padding: 0.875rem 1.25rem; font-weight: 600; color: var(--ng-text-dark); border-bottom: 1px solid var(--ng-border); background: var(--ng-surface); user-select: none; white-space: nowrap; }
+      .ng-loader-overlay { position: absolute; left: 0; right: 0; bottom: 0; background: rgba(255, 255, 255, 0.9); display: flex; align-items: center; justify-content: center; z-index: 50; opacity: 0; visibility: hidden; transition: all 0.2s ease; }
+      .ng-dark .ng-loader-overlay { background: rgba(52, 58, 64, 0.9); }
+      .nanogrid-table-wrapper.is-loading .ng-loader-overlay { opacity: 1; visibility: visible; }
+      .nanogrid-table-wrapper.is-loading .nanogrid-table { pointer-events: none; user-select: none; }
+
+      .nanogrid-table { width: 100%; border-collapse: collapse; text-align: left; font-size: var(--ng-text-size); min-width: max-content; }
+      .nanogrid-table, .nanogrid-table.table-bordered { border: none !important; margin-bottom: 0 !important; }
+      .nanogrid-table th { padding: 0.875rem 1.25rem; font-weight: 600; color: var(--ng-text-dark); border-bottom: 1px solid var(--ng-border) !important; border-top: none !important; background: var(--ng-surface); user-select: none; white-space: nowrap; }
       .nanogrid-table th.ng-sortable:hover { color: var(--ng-accent); cursor: pointer; }
       
       .ng-col-filter { display: block; margin-top: 0.5rem; width: 100%; padding: 0.25rem 0.5rem; font-size: 0.8em; border: 1px solid var(--ng-border); border-radius: 4px; background: var(--ng-bg); color: var(--ng-text-main); font-family: inherit; font-weight: normal; box-sizing: border-box; }
       .nanogrid-sort-icon { margin-left: 0.5rem; font-size: 0.8em; color: inherit; }
       
-      .nanogrid-table td { padding: 0.875rem 1.25rem; border-bottom: 1px solid var(--ng-border); color: var(--ng-text-main); background: var(--ng-bg); }
-      .nanogrid-table tbody tr:last-child td { border-bottom: none; }
+      .nanogrid-table td { padding: 0.875rem 1.25rem; border-bottom: 1px solid var(--ng-border) !important; color: var(--ng-text-main); background: var(--ng-bg); }
+      .nanogrid-table td:first-child, .nanogrid-table th:first-child { border-left: none !important; }
+      .nanogrid-table td:last-child, .nanogrid-table th:last-child { border-right: none !important; }
+      .nanogrid-table tbody tr:last-child td { border-bottom: none !important; }
       .nanogrid-table tbody tr:hover td { background-color: var(--ng-surface); }
       .nanogrid-table tbody tr.ng-selected td { background-color: var(--ng-accent-ring); }
 
       .ng-expand-btn { display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 20px; border-radius: 50%; background: var(--ng-accent-ring); color: var(--ng-accent); font-weight: bold; cursor: pointer; transition: all 0.2s; font-size: 14px; line-height: 1; user-select: none; }
       .ng-expand-btn::after { content: '+'; position: relative; top: -1px; }
-      tr.ng-expanded .ng-expand-btn { background: #fee2e2; color: #ef4444; }
+      tr.ng-expanded .ng-expand-btn { background: #fee2e2; color: #dc3545; }
       tr.ng-expanded .ng-expand-btn::after { content: '-'; }
       .ng-expanded-content { padding: 1rem 1.25rem; background: var(--ng-surface); border-bottom: 1px solid var(--ng-border); }
 
@@ -190,16 +222,15 @@ class NanoGrid {
       .ng-res-label { font-weight: 600; min-width: 140px; color: var(--ng-text-muted); }
       .ng-res-value { color: var(--ng-text-main); flex: 1; }
 
-      .nanogrid-table input[type="checkbox"] { appearance: none; -webkit-appearance: none; width: 18px; height: 18px; border: 1px solid #cbd5e1; border-radius: 4px; cursor: pointer; transition: all 0.2s; position: relative; display: grid; place-content: center; background: white; margin: 0; }
-      .ng-dark .nanogrid-table input[type="checkbox"] { border-color: var(--ng-border); background: var(--ng-surface); }
+      .nanogrid-table input[type="checkbox"] { appearance: none; -webkit-appearance: none; width: 18px; height: 18px; border: 1px solid var(--ng-border); border-radius: 4px; cursor: pointer; transition: all 0.2s; position: relative; display: grid; place-content: center; background: var(--ng-bg); margin: 0; }
       .nanogrid-table input[type="checkbox"]:checked { background: var(--ng-accent); border-color: var(--ng-accent); }
       .nanogrid-table input[type="checkbox"]:checked::before { content: ""; width: 10px; height: 10px; box-shadow: inset 1em 1em white; transform-origin: bottom left; clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%); }
 
       .nanogrid-footer { display: flex; justify-content: space-between; align-items: center; font-size: var(--ng-text-size); color: var(--ng-text-muted); flex-wrap: wrap; gap: 1rem; }
       .nanogrid-pagination { display: flex; gap: 0.25rem; align-items: center; flex-wrap: wrap; justify-content: center; }
       .nanogrid-page-btn { min-width: 32px; height: 32px; padding: 0 0.4rem; display: flex; align-items: center; justify-content: center; font-size: var(--ng-text-size); font-family: inherit; font-weight: 500; color: var(--ng-text-main); background: transparent; border: 1px solid transparent; border-radius: 6px; cursor: pointer; transition: all 0.2s; }
-      .nanogrid-page-btn:hover:not(:disabled) { background: var(--ng-surface); }
-      .nanogrid-page-btn.active { background: var(--ng-text-dark); color: white; border-color: var(--ng-text-dark); }
+      .nanogrid-page-btn:hover:not(:disabled):not(.active) { background: var(--ng-accent-ring); color: var(--ng-accent); }
+      .nanogrid-page-btn.active { background: var(--ng-accent); color: #ffffff !important; border-color: var(--ng-accent); }
       .nanogrid-page-btn:disabled { opacity: 0.4; cursor: not-allowed; }
       .nanogrid-page-dots { color: var(--ng-text-muted); padding: 0 0.25rem; user-select: none; }
       
@@ -313,13 +344,12 @@ class NanoGrid {
     
     let searchHtml = this.config.searchable ? `<div class="nanogrid-search-wrapper"><svg class="nanogrid-search-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg><input type="text" class="nanogrid-search" placeholder="Search data..." /></div>` : '';
 
-    let exportHtml = this.config.exportable ? `<div class="ng-dropdown" id="ng-export-dropdown"><button class="ng-dropdown-btn" data-toggle="dropdown"><svg class="ng-dropdown-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>Export</button><div class="ng-dropdown-menu left-align" style="min-width: 140px;"><div class="ng-dropdown-item" data-action="export" data-type="csv">Export CSV</div><div class="ng-dropdown-item" data-action="export" data-type="xls">Export Excel</div><div class="ng-dropdown-item" data-action="export" data-type="pdf">Print / PDF</div></div></div>` : '';
+    let exportHtml = this.config.exportable ? `<div class="ng-dropdown" id="ng-export-dropdown"><button class="ng-dropdown-btn" data-ng-toggle="dropdown"><svg class="ng-dropdown-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>Export</button><div class="ng-dropdown-menu left-align" style="min-width: 140px;"><div class="ng-dropdown-item" data-action="export" data-type="csv">Export CSV</div><div class="ng-dropdown-item" data-action="export" data-type="xls">Export Excel</div><div class="ng-dropdown-item" data-action="export" data-type="pdf">Print / PDF</div></div></div>` : '';
 
-    let colsHtml = `<div class="ng-dropdown"><button class="ng-dropdown-btn" data-toggle="dropdown"><svg class="ng-dropdown-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 3H5a2 2 0 0 0-2 2v4m6-6h10a2 2 0 0 1 2 2v4M9 3v18m0 0H5a2 2 0 0 1-2-2v-4m6 6h10a2 2 0 0 0 2-2v-4M3 9h18M3 15h18"/></svg>Columns</button><div class="ng-dropdown-menu left-align" style="min-width: 160px; padding: 0.5rem;">${this.columns.filter(c => c.field && !c.isAction && !c.isCheckbox && !c.isExpand).map(c => `<label style="display: flex; align-items: center; gap: 0.5rem; padding: 0.25rem; font-size: var(--ng-text-size); cursor: pointer; color: var(--ng-text-main);"><input type="checkbox" checked data-col-toggle="${c.field}" style="width: 14px; height: 14px;" /> ${c.title}</label>`).join('')}</div></div>`;
+    let colsHtml = `<div class="ng-dropdown"><button class="ng-dropdown-btn" data-ng-toggle="dropdown"><svg class="ng-dropdown-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 3H5a2 2 0 0 0-2 2v4m6-6h10a2 2 0 0 1 2 2v4M9 3v18m0 0H5a2 2 0 0 1-2-2v-4m6 6h10a2 2 0 0 0 2-2v-4M3 9h18M3 15h18"/></svg>Columns</button><div class="ng-dropdown-menu left-align" style="min-width: 160px; padding: 0.5rem;">${this.columns.filter(c => c.field && !c.isAction && !c.isCheckbox && !c.isExpand).map(c => `<label style="display: flex; align-items: center; gap: 0.5rem; padding: 0.25rem; font-size: var(--ng-text-size); cursor: pointer; color: var(--ng-text-main);"><input type="checkbox" checked data-col-toggle="${c.field}" style="width: 14px; height: 14px;" /> ${c.title}</label>`).join('')}</div></div>`;
 
-    let rowsHtml = `<div style="display: flex; align-items: center; gap: 0.5rem; width: 100%;"><span class="ng-dropdown-label" style="display: none;">Rows</span><div class="ng-dropdown" id="ng-size-dropdown" style="flex: 1;"><button class="ng-dropdown-btn" data-toggle="dropdown"><span class="ng-select-val">${this.state.pageSize}</span><svg class="ng-dropdown-icon rotate" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></button><div class="ng-dropdown-menu" style="min-width: 100%;">${this.config.pageSizeOptions.map(size => `<div class="ng-dropdown-item ${size === this.state.pageSize ? 'selected' : ''}" data-action="pagesize" data-value="${size}">${size}</div>`).join('')}</div></div></div>`;
+    let rowsHtml = `<div style="display: flex; align-items: center; gap: 0.5rem; width: 100%;"><span class="ng-dropdown-label" style="display: none;">Rows</span><div class="ng-dropdown" id="ng-size-dropdown" style="flex: 1;"><button class="ng-dropdown-btn" data-ng-toggle="dropdown"><span class="ng-select-val">${this.state.pageSize} rows</span><svg class="ng-dropdown-icon rotate" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></button><div class="ng-dropdown-menu" style="min-width: 100%;">${this.config.pageSizeOptions.map(size => `<div class="ng-dropdown-item ${size === this.state.pageSize ? 'selected' : ''}" data-action="pagesize" data-value="${size}">${size}</div>`).join('')}</div></div></div>`;
 
-    // TINANGGAL: Font Html (Aa button)
     topBar.innerHTML = `<div class="nanogrid-top-left">${searchHtml}${colsHtml}${exportHtml}</div><div class="nanogrid-top-right">${rowsHtml}</div>`;
     this.container.insertBefore(topBar, this.tableWrapper);
 
@@ -398,7 +428,7 @@ class NanoGrid {
     });
 
     this.container.addEventListener('click', (e) => {
-      const toggleBtn = e.target.closest('[data-toggle="dropdown"]');
+      const toggleBtn = e.target.closest('[data-ng-toggle="dropdown"]');
       if (!toggleBtn && !e.target.closest('.ng-dropdown-menu')) {
         this.container.querySelectorAll('.ng-dropdown-menu.open').forEach(menu => menu.classList.remove('open'));
         this.container.querySelectorAll('.ng-dropdown-btn.active').forEach(btn => btn.classList.remove('active'));
@@ -417,7 +447,7 @@ class NanoGrid {
         const newSize = parseInt(pageItem.dataset.value, 10);
         this.state.pageSize = newSize; this.state.page = 1;
         const dropdown = pageItem.closest('.ng-dropdown');
-        dropdown.querySelector('.ng-select-val').textContent = newSize;
+        dropdown.querySelector('.ng-select-val').textContent = newSize + ' rows';
         dropdown.querySelectorAll('.ng-dropdown-item').forEach(el => el.classList.remove('selected'));
         pageItem.classList.add('selected');
         this.config.serverSide ? this.fetchData() : this.processClientSide();
@@ -461,11 +491,19 @@ class NanoGrid {
   }
 
   showProcessing(text = this.config.processingText) {
-    const tbody = this.table.querySelector('tbody');
-    tbody.innerHTML = `<tr><td colspan="${this.columns.length}" style="text-align: center; padding: 4rem 2rem; color: var(--ng-text-muted);"><div style="display: flex; justify-content: center; align-items: center; gap: 0.75rem; font-weight: 500;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--ng-accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="animation: ng-spin 1s linear infinite;"><path d="M21 12a9 9 0 1 1-6.219-8.56"></path></svg>${text}</div></td></tr>`;
+    const thead = this.table.querySelector('thead');
+    if (thead) {
+      this.overlay.style.top = `${thead.offsetHeight}px`;
+    } else {
+      this.overlay.style.top = '0px';
+    }
+    this.tableWrapper.classList.add('is-loading');
   }
 
-  hideProcessing() { this.processClientSide(); }
+  hideProcessing() { 
+    this.tableWrapper.classList.remove('is-loading'); 
+  }
+
   getSelected() { return Array.from(this.state.selected); }
   reload(newData = null, resetPage = true) {
     if (resetPage) { this.state.page = 1; this.state.expanded.clear(); }
@@ -473,19 +511,65 @@ class NanoGrid {
     else { if (newData) this.config.data = newData; this.processClientSide(); }
   }
 
+  // --- UPDATED: MERGE CUSTOM PAYLOAD & DATA MAPPING ---
   async fetchData() {
     if (!this.config.ajax) return;
     this.showProcessing(); 
     try {
-      const response = await this.config.ajax({
+      let payload = {
         page: this.state.page, pageSize: this.state.pageSize, search: this.state.search, colFilters: this.state.colFilters, sortCol: this.state.sortCol, sortDir: this.state.sortDir
-      });
-      this.state.data = response.data;
-      this.state.totalRecords = response.total;
+      };
+
+      let result;
+
+      if (typeof this.config.ajax === 'function') {
+        result = await this.config.ajax(payload);
+      } else {
+        const isString = typeof this.config.ajax === 'string';
+        let url = isString ? this.config.ajax : this.config.ajax.url;
+        let method = isString ? 'GET' : (this.config.ajax.method || 'GET').toUpperCase();
+        let headers = isString ? {} : (this.config.ajax.headers || {});
+        let customData = isString ? {} : (this.config.ajax.data || {});
+
+        // Merge custom payload data into default pagination payload
+        payload = { ...payload, ...customData };
+        
+        let fetchConfig = { method, headers };
+
+        if (method === 'GET') {
+          const params = new URLSearchParams();
+          Object.entries(payload).forEach(([key, value]) => {
+            if (value !== null && value !== '') {
+               params.append(key, typeof value === 'object' ? JSON.stringify(value) : value);
+            }
+          });
+          url += (url.includes('?') ? '&' : '?') + params.toString();
+        } else {
+          fetchConfig.headers['Content-Type'] = 'application/json';
+          fetchConfig.body = JSON.stringify(payload);
+        }
+
+        const response = await fetch(url, fetchConfig);
+        const json = await response.json();
+
+        // Data Mapping Engine
+        let dataSrc = isString ? 'data' : (this.config.ajax.dataSrc || 'data');
+        let totalSrc = isString ? 'total' : (this.config.ajax.totalSrc || 'total');
+
+        result = {
+           data: json[dataSrc] || [],
+           total: json[totalSrc] || 0
+        };
+      }
+
+      this.state.data = result.data;
+      this.state.totalRecords = result.total;
       this.renderBody(this.state.data);
       this.updateFooter();
     } catch (e) {
-      this.table.querySelector('tbody').innerHTML = `<tr><td colspan="${this.columns.length}" style="text-align:center; color: red;">Error loading data</td></tr>`;
+      console.error("NanoGrid Fetch Error:", e);
+    } finally {
+      this.hideProcessing();
     }
   }
 
@@ -524,6 +608,8 @@ class NanoGrid {
       this.updateFooter();
       
       if (this.config.responsive) setTimeout(() => this.checkResponsiveness(), 0);
+      
+      this.hideProcessing();
     }, 150);
   }
 
@@ -553,7 +639,7 @@ class NanoGrid {
     if (selectAllCb) selectAllCb.checked = false;
 
     if (data.length === 0) {
-      tbody.innerHTML = `<tr><td colspan="${this.columns.length}" style="text-align:center; padding: 2rem;">No results found</td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="${this.columns.length}" style="text-align:center; padding: 4rem 2rem; color: var(--ng-text-muted);">No records found</td></tr>`;
       return;
     }
 

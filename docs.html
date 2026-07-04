@@ -3,18 +3,18 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>NanoGrid | Get Started & Documentation</title>
+  <title>NanoGrid | Official Documentation</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
     @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap');
 
     :root {
       --bg: #ffffff;
-      --grid-line: #f1f5f9;
+      --grid-line: #f8fafc;
       --text-main: #0f172a;
-      --text-muted: #64748b;
+      --text-muted: #475569;
       --text-light: #94a3b8;
-      --accent: #4f46e5;
+      --accent: #007bff; 
       --border: #e2e8f0;
       --surface: #ffffff;
       --code-bg: #0f172a;
@@ -35,7 +35,7 @@
       background-size: 40px 40px;
       background-position: center top;
       background-attachment: fixed;
-      line-height: 1.6;
+      line-height: 1.7;
       -webkit-font-smoothing: antialiased;
       display: flex;
       flex-direction: column;
@@ -43,19 +43,19 @@
     }
 
     /* Navbar */
-    nav { display: flex; justify-content: space-between; align-items: center; padding: 1rem 2rem; background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(8px); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100; }
+    nav { display: flex; justify-content: space-between; align-items: center; padding: 1rem 2rem; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100; }
     .nav-left { display: flex; align-items: center; gap: 1rem; }
-    .logo { display: flex; align-items: center; justify-content: center; width: 28px; height: 28px; background: var(--accent); border-radius: 6px; }
-    .logo-inner { width: 12px; height: 12px; border: 2px solid white; border-radius: 2px; }
-    .brand-name { font-size: 1.1rem; font-weight: 700; color: var(--text-main); letter-spacing: -0.02em; text-decoration: none; }
+    .logo { display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; background: var(--accent); border-radius: 8px; }
+    .logo-inner { width: 14px; height: 14px; border: 2.5px solid white; border-radius: 3px; }
+    .brand-name { font-size: 1.25rem; font-weight: 800; color: var(--text-main); letter-spacing: -0.02em; text-decoration: none; }
     .nav-links { display: flex; gap: 1.5rem; }
-    .nav-links a { text-decoration: none; color: var(--text-muted); font-size: 0.875rem; font-weight: 500; transition: color 0.2s; }
+    .nav-links a { text-decoration: none; color: var(--text-muted); font-size: 0.9rem; font-weight: 600; transition: color 0.2s; }
     .nav-links a:hover, .nav-links a.active { color: var(--accent); }
 
     /* Layout */
     .docs-container {
       display: flex;
-      max-width: 1200px;
+      max-width: 1400px;
       margin: 0 auto;
       width: 100%;
       flex: 1;
@@ -63,63 +63,75 @@
 
     /* Sidebar */
     .sidebar {
-      width: 250px;
-      padding: 2rem 1rem 2rem 0;
+      width: 280px;
+      padding: 2.5rem 1.5rem 2rem 1rem;
       position: sticky;
-      top: 65px;
-      height: calc(100vh - 65px);
+      top: 70px;
+      height: calc(100vh - 70px);
       overflow-y: auto;
       border-right: 1px solid var(--border);
       scrollbar-width: thin;
     }
-    .sidebar h4 { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-light); margin-bottom: 0.75rem; margin-top: 1.5rem; }
+    .sidebar h4 { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-light); margin-bottom: 0.75rem; margin-top: 2rem; font-weight: 700; }
     .sidebar h4:first-child { margin-top: 0; }
     .sidebar ul { list-style: none; display: flex; flex-direction: column; gap: 0.25rem; }
-    .sidebar a { display: block; padding: 0.4rem 0.75rem; color: var(--text-muted); text-decoration: none; font-size: 0.875rem; font-weight: 500; border-radius: 6px; transition: all 0.2s; }
+    .sidebar a { display: block; padding: 0.45rem 0.85rem; color: var(--text-muted); text-decoration: none; font-size: 0.9rem; font-weight: 500; border-radius: 6px; transition: all 0.2s; }
     .sidebar a:hover { background: #f8fafc; color: var(--text-main); }
-    .sidebar a.active { background: #e0e7ff; color: var(--accent); }
+    .sidebar a.active { background: rgba(0, 123, 255, 0.08); color: var(--accent); font-weight: 600; }
 
     /* Main Content */
     .content {
       flex: 1;
-      padding: 2rem 3rem 6rem;
-      max-width: 800px;
+      padding: 3rem 4rem 6rem;
+      max-width: 900px;
     }
 
-    .content h1 { font-size: 2.5rem; font-weight: 800; letter-spacing: -0.03em; margin-bottom: 0.5rem; }
-    .content h2 { font-size: 1.5rem; font-weight: 700; margin: 3rem 0 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--border); }
-    .content h3 { font-size: 1.1rem; font-weight: 600; margin: 2rem 0 0.75rem; }
-    .content p { color: var(--text-muted); margin-bottom: 1rem; }
+    .content h1 { font-size: 3rem; font-weight: 800; letter-spacing: -0.04em; margin-bottom: 1rem; color: var(--text-main); }
+    .content h2 { font-size: 1.75rem; font-weight: 700; margin: 4rem 0 1.5rem; padding-bottom: 0.75rem; border-bottom: 1px solid var(--border); color: var(--text-main); letter-spacing: -0.02em; }
+    .content h3 { font-size: 1.25rem; font-weight: 600; margin: 2.5rem 0 1rem; color: var(--text-main); }
+    .content p { color: var(--text-muted); margin-bottom: 1.25rem; font-size: 1rem; }
     
+    /* Feature Cards */
+    .pros-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin: 2rem 0 3rem; }
+    .pro-card { background: var(--surface); padding: 1.75rem; border-radius: 16px; border: 1px solid var(--border); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); transition: transform 0.2s, box-shadow 0.2s; }
+    .pro-card:hover { transform: translateY(-4px); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05); border-color: #bfdbfe; }
+    .pro-card h3 { margin-top: 0; font-size: 1.1rem; color: var(--text-main); display: flex; align-items: center; gap: 0.75rem; }
+    .pro-card p { font-size: 0.9rem; margin: 0; color: var(--text-muted); line-height: 1.6; }
+    .icon-box { background: rgba(0, 123, 255, 0.1); color: var(--accent); width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border-radius: 8px; font-size: 1.1rem; }
+
     /* Code Blocks */
     pre {
       background: var(--code-bg);
       color: var(--code-text);
-      padding: 1.25rem;
+      padding: 1.5rem;
       border-radius: 12px;
       overflow-x: auto;
       font-family: var(--font-code);
       font-size: 0.875rem;
-      margin-bottom: 1.5rem;
-      line-height: 1.5;
+      margin-bottom: 2rem;
+      line-height: 1.6;
       box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
     }
-    code { font-family: var(--font-code); background: #f1f5f9; color: #b91c1c; padding: 0.2rem 0.4rem; border-radius: 4px; font-size: 0.85em; }
-    pre code { background: transparent; color: inherit; padding: 0; }
+    code { font-family: var(--font-code); background: #f1f5f9; color: #b91c1c; padding: 0.2rem 0.4rem; border-radius: 6px; font-size: 0.85em; font-weight: 500; }
+    pre code { background: transparent; color: inherit; padding: 0; font-weight: 400; }
 
     /* Tables */
-    table { width: 100%; border-collapse: collapse; margin: 1.5rem 0; font-size: 0.875rem; background: var(--surface); border-radius: 8px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
-    th, td { text-align: left; padding: 1rem; border-bottom: 1px solid var(--border); }
-    th { background: #f8fafc; color: var(--text-main); font-weight: 600; }
+    table { width: 100%; border-collapse: collapse; margin: 2rem 0; font-size: 0.9rem; background: var(--surface); border-radius: 12px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.05); border: 1px solid var(--border); }
+    th, td { text-align: left; padding: 1rem 1.25rem; border-bottom: 1px solid var(--border); }
+    th { background: #f8fafc; color: var(--text-main); font-weight: 600; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.05em; }
     td { color: var(--text-muted); }
-    td code { color: var(--accent); background: #e0e7ff; }
+    td code { color: var(--accent); background: rgba(0, 123, 255, 0.08); border: 1px solid rgba(0, 123, 255, 0.15); }
 
-    .note { padding: 1rem; background: #e0e7ff; border-left: 4px solid var(--accent); border-radius: 0 8px 8px 0; margin-bottom: 1.5rem; font-size: 0.9rem; color: #3730a3; }
+    .note { padding: 1.25rem 1.5rem; background: rgba(0, 123, 255, 0.04); border-left: 4px solid var(--accent); border-radius: 0 12px 12px 0; margin: 2rem 0; font-size: 0.95rem; color: #0056b3; line-height: 1.6; }
+    .note strong { color: #004085; }
+
+    hr { margin: 4rem 0; border: 0; border-top: 1px solid var(--border); }
 
     @media (max-width: 768px) {
       .docs-container { flex-direction: column; }
-      .sidebar { width: 100%; height: auto; position: static; border-right: none; border-bottom: 1px solid var(--border); padding: 1rem; }
-      .content { padding: 2rem 1rem; }
+      .sidebar { width: 100%; height: auto; position: static; border-right: none; border-bottom: 1px solid var(--border); padding: 1.5rem; }
+      .content { padding: 2rem 1.5rem; }
+      .pros-grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -133,67 +145,95 @@
     <div class="nav-links">
       <a href="/">Home</a>
       <a href="/docs" class="active">Documentation</a>
-      <a href="#">GitHub</a>
+      <a href="https://github.com">GitHub</a>
     </div>
   </nav>
 
   <div class="docs-container">
     
     <aside class="sidebar">
-      <h4>Getting Started</h4>
+      <h4>1. Getting Started</h4>
       <ul>
-        <li><a href="#installation" class="active">Installation</a></li>
-        <li><a href="#basic-usage">Basic Usage</a></li>
-        <li><a href="#configuration">Configuration API</a></li>
+        <li><a href="#introduction">Introduction</a></li>
+        <li><a href="#installation">Installation</a></li>
+        <li><a href="#quick-start">Quick Start</a></li>
       </ul>
-      <h4>Features & Guides</h4>
+      <h4>2. Core Concepts</h4>
+      <ul>
+        <li><a href="#configuration">Configuration API</a></li>
+        <li><a href="#framework-compatibility">CSS Frameworks</a></li>
+        <li><a href="#data-mapping">Data Mapping & Aliases</a></li>
+      </ul>
+      <h4>3. UI Features</h4>
       <ul>
         <li><a href="#responsive">Responsive Collapse</a></li>
-        <li><a href="#sticky-filters">Sticky & Filters</a></li>
+        <li><a href="#sticky-filters">Sticky & Column Filters</a></li>
         <li><a href="#row-expansion">Row Expansion</a></li>
-        <li><a href="#checkboxes">Checkboxes</a></li>
-        <li><a href="#custom-renderers">Custom Columns</a></li>
-        <li><a href="#server-side">Server-Side (AJAX)</a></li>
-        <li><a href="#exporting">Exporting Data</a></li>
+        <li><a href="#checkboxes">Row Checkboxes</a></li>
+        <li><a href="#custom-renderers">Custom HTML Renderers</a></li>
       </ul>
-      <h4>Backend Guides</h4>
+      <h4>4. Data & Backend</h4>
       <ul>
-        <li><a href="#guide-laravel">Integration: Laravel</a></li>
-        <li><a href="#guide-ci4">Integration: CI4</a></li>
+        <li><a href="#server-side">Server-Side & Payloads</a></li>
+        <li><a href="#csrf-headers">CSRF & Headers</a></li>
+        <li><a href="#exporting">Export Engine</a></li>
       </ul>
-      <h4>Public Methods</h4>
+      <h4>5. Integrations</h4>
       <ul>
-        <li><a href="#api-methods">Grid API</a></li>
+        <li><a href="#guide-laravel">Laravel (PHP)</a></li>
+        <li><a href="#guide-ci4">CodeIgniter 4 (PHP)</a></li>
+        <li><a href="#api-methods">Grid API Methods</a></li>
       </ul>
     </aside>
 
     <main class="content">
       <h1>Documentation</h1>
-      <p>Everything you need to integrate and master NanoGrid in your application.</p>
+      <p>A comprehensive, step-by-step guide to mastering NanoGrid—the zero-dependency, enterprise-ready data table.</p>
 
-      <section id="installation">
-        <h2>1. Installation</h2>
-        <p>Because NanoGrid is entirely Vanilla JavaScript with zero dependencies, you don't need NPM or Webpack to use it.</p>
-        <p>Simply copy the <code>nanogrid.js</code> file into your project directory and include it in your HTML right before your closing <code>&lt;/body&gt;</code> tag.</p>
+      <section id="introduction">
+        <h2>1. Introduction</h2>
+        <p>NanoGrid was engineered to solve a specific problem: bridging the gap between basic HTML tables and massive, bloated grid libraries that require Node.js, Webpack, or jQuery to function. It provides enterprise features in a single, lightweight file.</p>
         
-<pre><code>&lt;!-- Include NanoGrid Core --&gt;
-&lt;script src="nanogrid.js"&gt;&lt;/script&gt;</code></pre>
-        
-        <div class="note">
-          <strong>Note:</strong> NanoGrid automatically injects its own CSS styles into the DOM upon initialization. You do not need to link any external stylesheets.
+        <div class="pros-grid">
+          <div class="pro-card">
+            <h3><div class="icon-box">🚀</div> Zero Dependencies</h3>
+            <p>No jQuery, no React, no build steps. It is a single, heavily optimized Vanilla JS file. Plug it in and it works.</p>
+          </div>
+          <div class="pro-card">
+            <h3><div class="icon-box">🖥️</div> HTML-First Design</h3>
+            <p>Define table behaviors directly via HTML attributes (e.g., <code>data-sticky="left"</code>). Less JavaScript, cleaner code.</p>
+          </div>
+          <div class="pro-card">
+            <h3><div class="icon-box">⚡</div> Smart AJAX Loader</h3>
+            <p>Native <code>fetch()</code> integration that intelligently overlays a loading spinner over your data while keeping headers readable.</p>
+          </div>
+          <div class="pro-card">
+            <h3><div class="icon-box">🤝</div> Framework Agnostic</h3>
+            <p>Automatically resolves CSS conflicts. Works flawlessly out-of-the-box inside AdminLTE, Bootstrap, or Tailwind projects.</p>
+          </div>
         </div>
       </section>
 
-      <section id="basic-usage">
-        <h2>2. Basic Usage</h2>
-        <p>NanoGrid requires only a barebones HTML <code>&lt;table&gt;</code> structure. The library will automatically wrap it, apply styles, and build the controls (Search, Dropdowns, Pagination).</p>
+      <section id="installation">
+        <h2>Installation</h2>
+        <p>Because NanoGrid is dependency-free, you do not need a package manager. Simply download the <code>nanogrid.js</code> file and include it in your HTML.</p>
         
-        <h3>The HTML Structure</h3>
-        <p>Define your columns inside the <code>&lt;thead&gt;</code>. Use the <code>data-field</code> attribute to tell NanoGrid which property from your JSON object maps to which column.</p>
+<pre><code>&lt;!-- Place this before your closing &lt;/body&gt; tag --&gt;
+&lt;script src="/js/nanogrid.js"&gt;&lt;/script&gt;</code></pre>
+        <div class="note">
+          <strong>Note:</strong> NanoGrid automatically injects its own CSS theme into the DOM during initialization. You do not need to link any separate stylesheet files.
+        </div>
+      </section>
+
+      <section id="quick-start">
+        <h2>Quick Start</h2>
+        <p>To initialize NanoGrid, you must provide a standard HTML <code>&lt;table&gt;</code>. NanoGrid parses the <code>data-field</code> attribute on your <code>&lt;th&gt;</code> tags to understand how to map your JSON data to specific columns.</p>
+
+        <h3>1. Prepare your HTML</h3>
 <pre><code>&lt;table id="myTable"&gt;
   &lt;thead&gt;
     &lt;tr&gt;
-      &lt;th data-field="id"&gt;ID&lt;/th&gt;
+      &lt;th data-field="id"&gt;# ID&lt;/th&gt;
       &lt;th data-field="name"&gt;Full Name&lt;/th&gt;
       &lt;th data-field="email" data-sortable="false"&gt;Email Address&lt;/th&gt;
     &lt;/tr&gt;
@@ -201,21 +241,24 @@
   &lt;tbody&gt;&lt;/tbody&gt;
 &lt;/table&gt;</code></pre>
 
-        <h3>The JavaScript Initialization</h3>
+        <h3>2. Initialize the Grid</h3>
 <pre><code>document.addEventListener('DOMContentLoaded', () => {
-  const users = [
+  const dataset = [
     { id: 1, name: "Alice", email: "alice@example.com" },
     { id: 2, name: "Bob", email: "bob@example.com" }
   ];
 
   const grid = new NanoGrid('#myTable', {
-    data: users
+    data: dataset
   });
 });</code></pre>
       </section>
 
+      <hr>
+
       <section id="configuration">
-        <h2>3. Configuration API</h2>
+        <h2>Configuration API</h2>
+        <p>The NanoGrid constructor accepts an object to globally modify the grid's behavior. Below are the available properties you can use to tailor the table to your application.</p>
         <table>
           <thead>
             <tr>
@@ -226,108 +269,147 @@
             </tr>
           </thead>
           <tbody>
-            <tr><td><code>data</code></td><td>Array</td><td><code>[]</code></td><td>Array of JSON objects for client-side mode.</td></tr>
-            <tr><td><code>theme</code></td><td>String</td><td><code>'light'</code></td><td>Sets visual theme: <code>'light'</code>, <code>'dark'</code>, or <code>'auto'</code>.</td></tr>
-            <tr><td><code>responsive</code></td><td>Boolean</td><td><code>true</code></td><td>Auto-hides right-most columns into a collapsible row on mobile screens.</td></tr>
-            <tr><td><code>pageSize</code></td><td>Number</td><td><code>10</code></td><td>Default rows displayed per page.</td></tr>
-            <tr><td><code>pageSizeOptions</code></td><td>Array</td><td><code>[10, 25, 50, 100]</code></td><td>Options in the "Rows per page" dropdown.</td></tr>
-            <tr><td><code>fontSize</code></td><td>String</td><td><code>'0.875rem'</code></td><td>Globally controls the font size of the grid.</td></tr>
-            <tr><td><code>searchable</code></td><td>Bool|Array</td><td><code>true</code></td><td>Toggles global search OR limits search by column index (e.g. <code>[0, 2]</code>).</td></tr>
-            <tr><td><code>checkboxes</code></td><td>Boolean</td><td><code>false</code></td><td>Auto-injects a checkbox column for bulk selection.</td></tr>
-            <tr><td><code>rowIdField</code></td><td>String</td><td><code>'id'</code></td><td>JSON key used to uniquely identify rows (crucial for checkboxes/expansion).</td></tr>
-            <tr><td><code>serverSide</code></td><td>Boolean</td><td><code>false</code></td><td>Enables backend database processing.</td></tr>
+            <tr><td><code>data</code></td><td>Array</td><td><code>[]</code></td><td>Array of objects to populate the table when operating in Client-Side mode.</td></tr>
+            <tr><td><code>theme</code></td><td>String</td><td><code>'light'</code></td><td>Controls the UI colors. Accepts <code>'light'</code>, <code>'dark'</code>, or <code>'auto'</code> (syncs with OS).</td></tr>
+            <tr><td><code>responsive</code></td><td>Boolean</td><td><code>true</code></td><td>Auto-hides right-most columns into a collapsible accordion on small screens.</td></tr>
+            <tr><td><code>pageSize</code></td><td>Number</td><td><code>10</code></td><td>The default number of rows displayed per page.</td></tr>
+            <tr><td><code>fontSize</code></td><td>String</td><td><code>'0.875rem'</code></td><td>Globally controls the font size using standard CSS values (e.g. <code>'12px'</code>).</td></tr>
+            <tr><td><code>searchable</code></td><td>Bool|Array</td><td><code>true</code></td><td>Toggles the global search bar, or limits it to specific column indices (e.g. <code>[0, 1]</code>).</td></tr>
+            <tr><td><code>checkboxes</code></td><td>Boolean</td><td><code>false</code></td><td>Injects a checkbox column on the far left for bulk row selection.</td></tr>
+            <tr><td><code>rowIdField</code></td><td>String</td><td><code>'id'</code></td><td>The unique key identifier in your JSON data, required for selection and expansion.</td></tr>
+            <tr><td><code>serverSide</code></td><td>Boolean</td><td><code>false</code></td><td>Switches the table into AJAX mode, pushing processing to your backend database.</td></tr>
+            <tr><td><code>ajax</code></td><td>Str|Obj|Fn</td><td><code>null</code></td><td>The endpoint or configuration object used to fetch data from your server.</td></tr>
           </tbody>
         </table>
       </section>
 
+      <section id="framework-compatibility">
+        <h2>CSS Framework Compatibility</h2>
+        <p>If you are injecting NanoGrid into an existing admin dashboard (such as <strong>AdminLTE</strong> or <strong>Bootstrap</strong>), NanoGrid has intelligent fallback mechanisms to prevent layout breaks.</p>
+        <ul>
+          <li><strong>Dropdown Safety:</strong> Standard Bootstrap uses <code>data-toggle="dropdown"</code>. NanoGrid intentionally uses a custom <code>data-ng-toggle="dropdown"</code> to prevent Bootstrap's JavaScript from hijacking the grid's menus, avoiding console errors.</li>
+          <li><strong>Border Normalization:</strong> If you accidentally leave the <code>table-bordered</code> class on your table, NanoGrid detects this and strips conflicting borders so the table remains clean.</li>
+        </ul>
+      </section>
+
+      <section id="data-mapping">
+        <h2>Data Mapping & SQL Aliases</h2>
+        <p>In real-world applications, your database column names (or SQL aliases) rarely match what you want your users to read on the screen. NanoGrid handles data mapping implicitly through your HTML.</p>
+
+        <h3>1. Frontend Data Mapping</h3>
+        <p>NanoGrid maps data strictly based on the <code>data-field</code> attribute. The text inside the <code>&lt;th&gt;</code> does not matter. If your backend query uses an alias like <code>SELECT full_name AS author_alias</code>, supply that exact alias to the data-field.</p>
+<pre><code>&lt;!-- Expects { "author_alias": "John Doe" }, but displays "Author Name" visually --&gt;
+&lt;th data-field="author_alias"&gt;Author Name&lt;/th&gt;</code></pre>
+
+        <h3>2. Backend Sorting with Aliases</h3>
+        <p>When a user clicks to sort an aliased column, NanoGrid sends <code>sortCol: "author_alias"</code> to your backend. Running an <code>ORDER BY author_alias</code> directly on your database will usually fail. You must map it back to the real database column in your backend code.</p>
+<pre><code>// Example (PHP): Translating the frontend alias back to the actual DB column
+$sortCol = $request->input('sortCol');
+
+$columnMap = [
+    'author_alias' => 'users.actual_first_name_column'
+];
+
+$actualDbColumn = $columnMap[$sortCol] ?? $sortCol;
+$query->orderBy($actualDbColumn, 'asc');</code></pre>
+      </section>
+
+      <hr>
+
       <section id="responsive">
-        <h2>4. Responsive Collapse (Mobile Friendly)</h2>
-        <p>By default, NanoGrid uses an intelligent responsive engine (<code>responsive: true</code>). When the screen width gets too small, NanoGrid automatically hides the right-most columns and injects a <code>+</code> button on the left to reveal hidden data as a vertical list.</p>
+        <h2>Responsive Collapse</h2>
+        <p>Standard data tables break mobile layouts by forcing ugly horizontal scrollbars. By keeping <code>responsive: true</code> enabled, NanoGrid measures the container width. When columns run out of space, they are automatically hidden and a native <code>+</code> button is injected.</p>
+        <p>Clicking the <code>+</code> button elegantly expands the row downwards, presenting the hidden data in a clean, vertical list format.</p>
       </section>
 
       <section id="sticky-filters">
-        <h2>5. Sticky Columns & Per-Column Filters</h2>
-        <p>Keep important columns in view using <code>data-sticky="left"</code> or add column-specific search boxes using <code>data-filter="true"</code>.</p>
-<pre><code>&lt;!-- Sticky Column --&gt;
+        <h2>Sticky Columns & Column Filters</h2>
+        <p>You can enable advanced UI features dynamically just by writing standard HTML attributes on your headers. No complex JavaScript required.</p>
+<pre><code>&lt;!-- 1. Sticky: Keeps the column locked to the left edge while scrolling horizontally --&gt;
 &lt;th data-field="id" data-sticky="left"&gt;ID&lt;/th&gt;
 
-&lt;!-- Filterable Column --&gt;
+&lt;!-- 2. Filterable: Auto-generates a text search input specific to this column --&gt;
 &lt;th data-field="role" data-filter="true"&gt;Role&lt;/th&gt;</code></pre>
       </section>
 
-      <section id="row-expansion">
-        <h2>6. Row Expansion (Accordion Details)</h2>
-        <p>Pass a function to <code>rowExpansion</code> to return extra HTML details when a row is clicked.</p>
-<pre><code>const grid = new NanoGrid('#myTable', {
-  data: users,
-  rowExpansion: (row) => `
-    &lt;div style="padding: 1rem;"&gt;
-      &lt;h4&gt;Additional Info for ${row.name}&lt;/h4&gt;
-      &lt;p&gt;Email: ${row.email}&lt;/p&gt;
-    &lt;/div&gt;
-  `
-});</code></pre>
-      </section>
-
-      <section id="checkboxes">
-        <h2>7. Row Selection (Checkboxes)</h2>
-        <p>NanoGrid persistently tracks selections across paginations.</p>
-<pre><code>const grid = new NanoGrid('#myTable', {
-  data: users,
-  checkboxes: true,     
-  rowIdField: 'uuid'    
-});
-
-// To retrieve IDs: grid.getSelected();</code></pre>
-      </section>
-
       <section id="custom-renderers">
-        <h2>8. Custom Columns (Badges & Buttons)</h2>
+        <h2>Custom Renderers (HTML, Badges, Buttons)</h2>
+        <p>Sometimes you need to render actual HTML elements (like a Status Badge or an Edit Button) instead of raw text. You can achieve this by passing functions into the <code>columnDefs</code> property, matching your <code>data-field</code> names.</p>
 <pre><code>new NanoGrid('#myTable', {
-  data: users,
+  data: dataset,
   columnDefs: {
+    // Renders a colored span instead of plain text
     status: (row) => {
       const color = row.status === 'Active' ? 'green' : 'gray';
       return `&lt;span style="color: ${color}; font-weight: bold;"&gt;${row.status}&lt;/span&gt;`;
     },
-    actions: (row) => `&lt;button onclick="del(${row.id})"&gt;Delete&lt;/button&gt;`
+    // Renders an Action button dynamically passing the Row ID
+    actions: (row) => `&lt;button onclick="editRecord(${row.id})"&gt;Edit&lt;/button&gt;`
   }
 });</code></pre>
       </section>
+
+      <hr>
 
       <section id="server-side">
-        <h2>9. Server-Side Processing (AJAX)</h2>
-        <p>Enable <code>serverSide: true</code> and provide an async <code>ajax</code> function. NanoGrid passes its state (page, sorting, search, colFilters) to your backend.</p>
-        
+        <h2>Server-Side & Payloads</h2>
+        <p>For large datasets, client-side arrays will crash the browser. Enabling <code>serverSide: true</code> shifts pagination, searching, and sorting to your backend server.</p>
+
+        <h3>1. The Simple GET Request</h3>
+        <p>If you only need standard pagination, pass a URL string. NanoGrid automatically appends query parameters like <code>?page=1&pageSize=10</code>.</p>
 <pre><code>new NanoGrid('#myTable', {
   serverSide: true,
-  ajax: async (params) => {
-    /* 'params' contains:
-       { page: 1, pageSize: 10, search: "john", sortCol: "id", sortDir: "asc", colFilters: {} }
-    */
-    const query = new URLSearchParams(params).toString();
-    const response = await fetch(`/api/users?${query}`);
-    const result = await response.json();
+  ajax: '/api/users' 
+});</code></pre>
+
+        <h3>2. POST Requests & Custom Payloads</h3>
+        <p>If you need to send extra data (like passing a specific department ID filter to the backend), or if your API returns data in an unfamiliar format, provide a configuration object to the <code>ajax</code> property.</p>
+<pre><code>new NanoGrid('#myTable', {
+  serverSide: true,
+  ajax: {
+    url: '/api/users',
+    method: 'POST',
     
-    // You MUST return this format:
-    return { data: result.data, total: result.total };
+    // CUSTOM PAYLOAD: Sent in the JSON body alongside the pagination state
+    data: {
+      department_id: 5,
+      is_archived: false
+    },
+
+    // RESPONSE MAPPING: If your API returns { items: [], count: 100 }
+    dataSrc: 'items',   // NanoGrid will look for 'items' instead of 'data'
+    totalSrc: 'count'   // NanoGrid will look for 'count' instead of 'total'
   }
 });</code></pre>
       </section>
 
-      <section id="exporting">
-        <h2>10. Exporting Data</h2>
-        <p>NanoGrid includes a native export engine for CSV, Excel, Word, and PDF. Custom columns (buttons) and checkboxes are automatically stripped out of exports to ensure clean data.</p>
+      <section id="csrf-headers">
+        <h2>CSRF Tokens & Authentication</h2>
+        <p>Modern backend frameworks (Laravel, CI4, Django) strictly require Cross-Site Request Forgery (CSRF) tokens for <code>POST</code> requests, resulting in 419 or 403 errors if omitted. You can easily inject these tokens via the <code>headers</code> object.</p>
+
+<pre><code>// Grab the token from your HTML head
+const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+new NanoGrid('#myTable', {
+  serverSide: true,
+  ajax: {
+    url: '/api/users',
+    method: 'POST',
+    headers: {
+      'X-CSRF-TOKEN': csrfToken,
+      
+      // If authenticating with an external API (JWT)
+      'Authorization': `Bearer ${localStorage.getItem('token')}`
+    }
+  }
+});</code></pre>
       </section>
 
-      <hr style="margin: 4rem 0; border: 0; border-top: 1px solid var(--border);" />
+      <hr>
 
       <section id="guide-laravel">
-        <h2>11. Integration: Laravel (PHP)</h2>
-        <p>Using NanoGrid's <code>serverSide: true</code> with a Laravel backend is incredibly easy. NanoGrid's payload maps perfectly to Laravel's Eloquent queries and paginators.</p>
-
-        <h3>Controller Example</h3>
-        <p>Here is a copy-paste template for your Laravel Controller to handle global searches, sorting, and pagination.</p>
+        <h2>Integration: Laravel (PHP)</h2>
+        <p>Below is a standardized Laravel Controller recipe that natively interprets NanoGrid's <code>POST</code> payload, applies searching, mapping, and pagination, and returns the exact JSON format NanoGrid expects.</p>
 <pre><code>&lt;?php
 
 namespace App\Http\Controllers;
@@ -349,19 +431,24 @@ class UserController extends Controller
             });
         }
 
-        // 2. Handle Sorting
+        // 2. Handle Sorting & SQL Aliases
         if ($sortCol = $request->input('sortCol')) {
             $sortDir = $request->input('sortDir', 'asc');
-            $query->orderBy($sortCol, $sortDir);
+            
+            // Protect against SQL injection by mapping to actual fields
+            $columnMap = ['author_name' => 'first_name'];
+            $actualCol = $columnMap[$sortCol] ?? $sortCol;
+            
+            $query->orderBy($actualCol, $sortDir);
         }
 
-        // 3. Handle Pagination
+        // 3. Handle Pagination natively with Laravel
         $page = $request->input('page', 1);
         $pageSize = $request->input('pageSize', 10);
         
         $paginator = $query->paginate($pageSize, ['*'], 'page', $page);
 
-        // 4. Return NanoGrid's required JSON structure
+        // 4. Return correct JSON structure
         return response()->json([
             'data' => $paginator->items(),
             'total' => $paginator->total()
@@ -371,10 +458,8 @@ class UserController extends Controller
       </section>
 
       <section id="guide-ci4">
-        <h2>12. Integration: CodeIgniter 4 (PHP)</h2>
-        <p>If you are using CodeIgniter 4, you can handle NanoGrid's request using the built-in Query Builder and Pagination engine.</p>
-
-        <h3>Controller Example</h3>
+        <h2>Integration: CodeIgniter 4 (PHP)</h2>
+        <p>If you are utilizing CodeIgniter 4, you can intercept NanoGrid's request using the built-in Query Builder.</p>
 <pre><code>&lt;?php
 
 namespace App\Controllers;
@@ -385,15 +470,19 @@ class UserController extends BaseController
 {
     public function getGridData()
     {
+        // Gracefully support both GET and POST requests
+        $requestData = $this->request->is('post') 
+                       ? $this->request->getJSON(true) 
+                       : $this->request->getGet();
+
         $model = new UserModel();
         
-        $search   = $this->request->getGet('search');
-        $sortCol  = $this->request->getGet('sortCol');
-        $sortDir  = $this->request->getGet('sortDir') ?? 'asc';
-        $page     = $this->request->getGet('page') ?? 1;
-        $pageSize = $this->request->getGet('pageSize') ?? 10;
+        $search   = $requestData['search'] ?? '';
+        $sortCol  = $requestData['sortCol'] ?? null;
+        $sortDir  = $requestData['sortDir'] ?? 'asc';
+        $page     = $requestData['page'] ?? 1;
+        $pageSize = $requestData['pageSize'] ?? 10;
 
-        // 1. Handle Global Search
         if (!empty($search)) {
             $model->groupStart()
                   ->like('name', $search)
@@ -401,16 +490,13 @@ class UserController extends BaseController
                   ->groupEnd();
         }
 
-        // 2. Handle Sorting
         if (!empty($sortCol)) {
             $model->orderBy($sortCol, $sortDir);
         }
 
-        // 3. Handle Pagination
         $data = $model->paginate($pageSize, 'default', $page);
         $total = $model->pager->getTotal();
 
-        // 4. Return NanoGrid's required JSON structure
         return $this->response->setJSON([
             'data' => $data,
             'total' => $total
@@ -420,27 +506,20 @@ class UserController extends BaseController
       </section>
 
       <section id="api-methods">
-        <h2>13. Grid API Methods</h2>
-        <p>Control your grid programmatically after initialization.</p>
+        <h2>Grid API Methods</h2>
+        <p>Store your grid instance in a variable (e.g., <code>window.myGrid = new NanoGrid(...)</code>) to interact with it programmatically later.</p>
 
         <h3><code>reload(newData = null, resetPage = true)</code></h3>
-<pre><code>// SERVER-SIDE: Triggers a fresh AJAX call
-grid.reload();
+        <p>Forces the grid to re-render. Ideal for refreshing the table after successfully deleting or inserting a record.</p>
+<pre><code>// SERVER-SIDE: Triggers a fresh AJAX call to the backend
+myGrid.reload();
 
-// SERVER-SIDE: Triggers an AJAX call but stays on current page
-grid.reload(null, false);
-
-// CLIENT-SIDE: Replaces the table with a new array
-grid.reload(newArray);</code></pre>
+// SERVER-SIDE: Refresh data, but DO NOT return to Page 1
+myGrid.reload(null, false);</code></pre>
 
         <h3><code>getSelected()</code></h3>
-        <p>Returns an Array of the unique IDs of all currently checked rows.</p>
-<pre><code>const idsToDelete = grid.getSelected();</code></pre>
-
-        <h3><code>showProcessing(text)</code> & <code>hideProcessing()</code></h3>
-        <p>Manually triggers NanoGrid's built-in loading spinner overlay.</p>
-<pre><code>grid.showProcessing('Validating records...');
-setTimeout(() => grid.hideProcessing(), 2000);</code></pre>
+        <p>When <code>checkboxes: true</code> is enabled, this method returns an Array of the unique identifiers (based on <code>rowIdField</code>) of all currently checked rows.</p>
+<pre><code>const idsToDelete = myGrid.getSelected(); // e.g., [4, 12, 19]</code></pre>
       </section>
 
     </main>
@@ -454,7 +533,7 @@ setTimeout(() => grid.hideProcessing(), 2000);</code></pre>
       let current = '';
       sections.forEach(section => {
         const sectionTop = section.offsetTop;
-        if (pageYOffset >= sectionTop - 100) {
+        if (pageYOffset >= sectionTop - 150) {
           current = section.getAttribute('id');
         }
       });
