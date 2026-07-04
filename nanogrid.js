@@ -12,37 +12,37 @@ class NanoGrid {
       serverSide: false,
       ajax: null,
       pageSize: 10,
-      pageSizeOptions: [5, 10, 20, 50],
+      pageSizeOptions: [10, 25, 50, 100], 
       searchable: true,
       exportable: true, 
       columnDefs: {},
       checkboxes: false,         
       rowIdField: 'id',          
-      fontSize: '0.875rem',      
+      fontSize: '0.875rem', // DITO NA LANG KOKONTROLIN ANG FONT SIZE!     
       processingText: 'Loading...',
-      theme: 'light', // CHANGED: Default is now strictly light theme!
+      theme: 'light', 
       rowExpansion: null,
       responsive: true 
     }, config);
 
     this.buildDOMStructure();
     this.applyTheme();
-    
-    // Inject Expand Header (The Plus Button Column)
-    if ((this.config.rowExpansion || this.config.responsive) && !this.table.querySelector('th[data-expand]')) {
-      const thExp = document.createElement('th');
-      thExp.setAttribute('data-expand', 'true');
-      thExp.style.width = '30px';
-      this.table.querySelector('thead tr').insertAdjacentElement('afterbegin', thExp);
-    }
 
-    // Inject Checkbox Header
+    // 1. Inject Checkbox Header FIRST
     if (this.config.checkboxes && !this.table.querySelector('th[data-checkbox]')) {
       const thCb = document.createElement('th');
       thCb.setAttribute('data-checkbox', 'true');
       thCb.innerHTML = `<input type="checkbox" class="ng-select-all" aria-label="Select All" />`;
       thCb.style.width = '40px';
       this.table.querySelector('thead tr').insertAdjacentElement('afterbegin', thCb);
+    }
+    
+    // 2. Inject Expand Header SECOND (so it pushes to the absolute left)
+    if ((this.config.rowExpansion || this.config.responsive) && !this.table.querySelector('th[data-expand]')) {
+      const thExp = document.createElement('th');
+      thExp.setAttribute('data-expand', 'true');
+      thExp.style.width = '30px';
+      this.table.querySelector('thead tr').insertAdjacentElement('afterbegin', thExp);
     }
 
     this.columns = Array.from(this.table.querySelectorAll('thead th')).map((th, index) => {
@@ -108,6 +108,8 @@ class NanoGrid {
   buildDOMStructure() {
     this.container = document.createElement('div');
     this.container.className = 'nanogrid-container';
+    
+    // Set the Font Size globally based on Config!
     this.container.style.setProperty('--ng-text-size', this.config.fontSize);
 
     this.tableWrapper = document.createElement('div');
@@ -313,10 +315,11 @@ class NanoGrid {
 
     let exportHtml = this.config.exportable ? `<div class="ng-dropdown" id="ng-export-dropdown"><button class="ng-dropdown-btn" data-toggle="dropdown"><svg class="ng-dropdown-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>Export</button><div class="ng-dropdown-menu left-align" style="min-width: 140px;"><div class="ng-dropdown-item" data-action="export" data-type="csv">Export CSV</div><div class="ng-dropdown-item" data-action="export" data-type="xls">Export Excel</div><div class="ng-dropdown-item" data-action="export" data-type="pdf">Print / PDF</div></div></div>` : '';
 
-    let colsHtml = `<div class="ng-dropdown"><button class="ng-dropdown-btn" data-toggle="dropdown"><svg class="ng-dropdown-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 3H5a2 2 0 0 0-2 2v4m6-6h10a2 2 0 0 1 2 2v4M9 3v18m0 0H5a2 2 0 0 1-2-2v-4m6 6h10a2 2 0 0 0 2-2v-4M3 9h18M3 15h18"/></svg>Columns</button><div class="ng-dropdown-menu" style="min-width: 160px; padding: 0.5rem;">${this.columns.filter(c => c.field && !c.isAction && !c.isCheckbox && !c.isExpand).map(c => `<label style="display: flex; align-items: center; gap: 0.5rem; padding: 0.25rem; font-size: var(--ng-text-size); cursor: pointer; color: var(--ng-text-main);"><input type="checkbox" checked data-col-toggle="${c.field}" style="width: 14px; height: 14px;" /> ${c.title}</label>`).join('')}</div></div>`;
+    let colsHtml = `<div class="ng-dropdown"><button class="ng-dropdown-btn" data-toggle="dropdown"><svg class="ng-dropdown-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 3H5a2 2 0 0 0-2 2v4m6-6h10a2 2 0 0 1 2 2v4M9 3v18m0 0H5a2 2 0 0 1-2-2v-4m6 6h10a2 2 0 0 0 2-2v-4M3 9h18M3 15h18"/></svg>Columns</button><div class="ng-dropdown-menu left-align" style="min-width: 160px; padding: 0.5rem;">${this.columns.filter(c => c.field && !c.isAction && !c.isCheckbox && !c.isExpand).map(c => `<label style="display: flex; align-items: center; gap: 0.5rem; padding: 0.25rem; font-size: var(--ng-text-size); cursor: pointer; color: var(--ng-text-main);"><input type="checkbox" checked data-col-toggle="${c.field}" style="width: 14px; height: 14px;" /> ${c.title}</label>`).join('')}</div></div>`;
 
-    let rowsHtml = `<div style="display: flex; align-items: center; gap: 0.5rem; width: 100%;"><span class="ng-dropdown-label" style="display: none;">Rows</span><div class="ng-dropdown" id="ng-size-dropdown" style="flex: 1;"><button class="ng-dropdown-btn" data-toggle="dropdown"><span class="ng-select-val">${this.state.pageSize} per page</span><svg class="ng-dropdown-icon rotate" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></button><div class="ng-dropdown-menu" style="min-width: 100%;">${this.config.pageSizeOptions.map(size => `<div class="ng-dropdown-item ${size === this.state.pageSize ? 'selected' : ''}" data-action="pagesize" data-value="${size}">${size}</div>`).join('')}</div></div></div>`;
+    let rowsHtml = `<div style="display: flex; align-items: center; gap: 0.5rem; width: 100%;"><span class="ng-dropdown-label" style="display: none;">Rows</span><div class="ng-dropdown" id="ng-size-dropdown" style="flex: 1;"><button class="ng-dropdown-btn" data-toggle="dropdown"><span class="ng-select-val">${this.state.pageSize}</span><svg class="ng-dropdown-icon rotate" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></button><div class="ng-dropdown-menu" style="min-width: 100%;">${this.config.pageSizeOptions.map(size => `<div class="ng-dropdown-item ${size === this.state.pageSize ? 'selected' : ''}" data-action="pagesize" data-value="${size}">${size}</div>`).join('')}</div></div></div>`;
 
+    // TINANGGAL: Font Html (Aa button)
     topBar.innerHTML = `<div class="nanogrid-top-left">${searchHtml}${colsHtml}${exportHtml}</div><div class="nanogrid-top-right">${rowsHtml}</div>`;
     this.container.insertBefore(topBar, this.tableWrapper);
 
@@ -414,7 +417,7 @@ class NanoGrid {
         const newSize = parseInt(pageItem.dataset.value, 10);
         this.state.pageSize = newSize; this.state.page = 1;
         const dropdown = pageItem.closest('.ng-dropdown');
-        dropdown.querySelector('.ng-select-val').textContent = `${newSize} per page`;
+        dropdown.querySelector('.ng-select-val').textContent = newSize;
         dropdown.querySelectorAll('.ng-dropdown-item').forEach(el => el.classList.remove('selected'));
         pageItem.classList.add('selected');
         this.config.serverSide ? this.fetchData() : this.processClientSide();

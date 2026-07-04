@@ -70,6 +70,7 @@
       height: calc(100vh - 65px);
       overflow-y: auto;
       border-right: 1px solid var(--border);
+      scrollbar-width: thin;
     }
     .sidebar h4 { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-light); margin-bottom: 0.75rem; margin-top: 1.5rem; }
     .sidebar h4:first-child { margin-top: 0; }
@@ -126,12 +127,12 @@
 
   <nav>
     <div class="nav-left">
-      <a href="index.html" class="logo"><div class="logo-inner"></div></a>
-      <a href="index.html" class="brand-name">NanoGrid</a>
+      <a href="/" class="logo" style="text-decoration: none;"><div class="logo-inner"></div></a>
+      <a href="/" class="brand-name">NanoGrid</a>
     </div>
     <div class="nav-links">
-      <a href="index.html">Home</a>
-      <a href="docs.html" class="active">Documentation</a>
+      <a href="/">Home</a>
+      <a href="/docs" class="active">Documentation</a>
       <a href="#">GitHub</a>
     </div>
   </nav>
@@ -147,14 +148,22 @@
       </ul>
       <h4>Features & Guides</h4>
       <ul>
+        <li><a href="#responsive">Responsive Collapse</a></li>
+        <li><a href="#sticky-filters">Sticky & Filters</a></li>
+        <li><a href="#row-expansion">Row Expansion</a></li>
+        <li><a href="#checkboxes">Checkboxes</a></li>
         <li><a href="#custom-renderers">Custom Columns</a></li>
-        <li><a href="#checkboxes">Row Selection (Checkboxes)</a></li>
         <li><a href="#server-side">Server-Side (AJAX)</a></li>
         <li><a href="#exporting">Exporting Data</a></li>
       </ul>
+      <h4>Backend Guides</h4>
+      <ul>
+        <li><a href="#guide-laravel">Integration: Laravel</a></li>
+        <li><a href="#guide-ci4">Integration: CI4</a></li>
+      </ul>
       <h4>Public Methods</h4>
       <ul>
-        <li><a href="#api-methods">Grid API Methods</a></li>
+        <li><a href="#api-methods">Grid API</a></li>
       </ul>
     </aside>
 
@@ -171,7 +180,7 @@
 &lt;script src="nanogrid.js"&gt;&lt;/script&gt;</code></pre>
         
         <div class="note">
-          <strong>Note:</strong> NanoGrid automatically injects its own minimal CSS styles into the DOM upon initialization. You do not need to link any external stylesheets.
+          <strong>Note:</strong> NanoGrid automatically injects its own CSS styles into the DOM upon initialization. You do not need to link any external stylesheets.
         </div>
       </section>
 
@@ -180,7 +189,7 @@
         <p>NanoGrid requires only a barebones HTML <code>&lt;table&gt;</code> structure. The library will automatically wrap it, apply styles, and build the controls (Search, Dropdowns, Pagination).</p>
         
         <h3>The HTML Structure</h3>
-        <p>Define your columns inside the <code>&lt;thead&gt;</code>. Use the <code>data-field</code> attribute to tell NanoGrid which property from your JSON object maps to which column. You can also disable sorting or searching on specific columns using <code>data-sortable="false"</code> or <code>data-searchable="false"</code>.</p>
+        <p>Define your columns inside the <code>&lt;thead&gt;</code>. Use the <code>data-field</code> attribute to tell NanoGrid which property from your JSON object maps to which column.</p>
 <pre><code>&lt;table id="myTable"&gt;
   &lt;thead&gt;
     &lt;tr&gt;
@@ -193,7 +202,6 @@
 &lt;/table&gt;</code></pre>
 
         <h3>The JavaScript Initialization</h3>
-        <p>Instantiate the <code>NanoGrid</code> class, passing your table's ID and a configuration object.</p>
 <pre><code>document.addEventListener('DOMContentLoaded', () => {
   const users = [
     { id: 1, name: "Alice", email: "alice@example.com" },
@@ -201,15 +209,13 @@
   ];
 
   const grid = new NanoGrid('#myTable', {
-    data: users,
-    pageSize: 10
+    data: users
   });
 });</code></pre>
       </section>
 
       <section id="configuration">
         <h2>3. Configuration API</h2>
-        <p>You can customize the grid's behavior by passing properties into the config object.</p>
         <table>
           <thead>
             <tr>
@@ -220,151 +226,204 @@
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td><code>data</code></td>
-              <td>Array</td>
-              <td><code>[]</code></td>
-              <td>Your array of JSON objects (used in Client-Side mode).</td>
-            </tr>
-            <tr>
-              <td><code>pageSize</code></td>
-              <td>Number</td>
-              <td><code>10</code></td>
-              <td>The default number of rows displayed per page.</td>
-            </tr>
-            <tr>
-              <td><code>pageSizeOptions</code></td>
-              <td>Array</td>
-              <td><code>[5, 10, 20, 50]</code></td>
-              <td>The available options in the "Rows per page" dropdown.</td>
-            </tr>
-            <tr>
-              <td><code>fontSize</code></td>
-              <td>String</td>
-              <td><code>'0.875rem'</code></td>
-              <td>Globally controls the font size of the entire grid (e.g., <code>'1rem'</code>, <code>'14px'</code>).</td>
-            </tr>
-            <tr>
-              <td><code>searchable</code></td>
-              <td>Boolean | Array</td>
-              <td><code>true</code></td>
-              <td>Toggles the global search bar OR restricts searching to specific column indices (e.g., <code>[0, 2]</code>).</td>
-            </tr>
-            <tr>
-              <td><code>checkboxes</code></td>
-              <td>Boolean</td>
-              <td><code>false</code></td>
-              <td>Auto-injects a checkbox column for bulk row selection.</td>
-            </tr>
-            <tr>
-              <td><code>rowIdField</code></td>
-              <td>String</td>
-              <td><code>'id'</code></td>
-              <td>The JSON key used to uniquely identify rows when checkboxes are enabled.</td>
-            </tr>
-            <tr>
-              <td><code>exportable</code></td>
-              <td>Boolean</td>
-              <td><code>true</code></td>
-              <td>Toggles the visibility of the unified Export dropdown menu.</td>
-            </tr>
-            <tr>
-              <td><code>serverSide</code></td>
-              <td>Boolean</td>
-              <td><code>false</code></td>
-              <td>Enables backend processing (requires the <code>ajax</code> property).</td>
-            </tr>
-            <tr>
-              <td><code>processingText</code></td>
-              <td>String</td>
-              <td><code>'Loading...'</code></td>
-              <td>The text displayed alongside the spinner during API fetching.</td>
-            </tr>
+            <tr><td><code>data</code></td><td>Array</td><td><code>[]</code></td><td>Array of JSON objects for client-side mode.</td></tr>
+            <tr><td><code>theme</code></td><td>String</td><td><code>'light'</code></td><td>Sets visual theme: <code>'light'</code>, <code>'dark'</code>, or <code>'auto'</code>.</td></tr>
+            <tr><td><code>responsive</code></td><td>Boolean</td><td><code>true</code></td><td>Auto-hides right-most columns into a collapsible row on mobile screens.</td></tr>
+            <tr><td><code>pageSize</code></td><td>Number</td><td><code>10</code></td><td>Default rows displayed per page.</td></tr>
+            <tr><td><code>pageSizeOptions</code></td><td>Array</td><td><code>[10, 25, 50, 100]</code></td><td>Options in the "Rows per page" dropdown.</td></tr>
+            <tr><td><code>fontSize</code></td><td>String</td><td><code>'0.875rem'</code></td><td>Globally controls the font size of the grid.</td></tr>
+            <tr><td><code>searchable</code></td><td>Bool|Array</td><td><code>true</code></td><td>Toggles global search OR limits search by column index (e.g. <code>[0, 2]</code>).</td></tr>
+            <tr><td><code>checkboxes</code></td><td>Boolean</td><td><code>false</code></td><td>Auto-injects a checkbox column for bulk selection.</td></tr>
+            <tr><td><code>rowIdField</code></td><td>String</td><td><code>'id'</code></td><td>JSON key used to uniquely identify rows (crucial for checkboxes/expansion).</td></tr>
+            <tr><td><code>serverSide</code></td><td>Boolean</td><td><code>false</code></td><td>Enables backend database processing.</td></tr>
           </tbody>
         </table>
       </section>
 
-      <section id="custom-renderers">
-        <h2>4. Custom Columns (Badges & Buttons)</h2>
-        <p>To render HTML (like Action Buttons or Status Badges) instead of raw text, use the <code>columnDefs</code> property mapped to your HTML's <code>data-field</code>.</p>
-        
-<pre><code>new NanoGrid('#myTable', {
+      <section id="responsive">
+        <h2>4. Responsive Collapse (Mobile Friendly)</h2>
+        <p>By default, NanoGrid uses an intelligent responsive engine (<code>responsive: true</code>). When the screen width gets too small, NanoGrid automatically hides the right-most columns and injects a <code>+</code> button on the left to reveal hidden data as a vertical list.</p>
+      </section>
+
+      <section id="sticky-filters">
+        <h2>5. Sticky Columns & Per-Column Filters</h2>
+        <p>Keep important columns in view using <code>data-sticky="left"</code> or add column-specific search boxes using <code>data-filter="true"</code>.</p>
+<pre><code>&lt;!-- Sticky Column --&gt;
+&lt;th data-field="id" data-sticky="left"&gt;ID&lt;/th&gt;
+
+&lt;!-- Filterable Column --&gt;
+&lt;th data-field="role" data-filter="true"&gt;Role&lt;/th&gt;</code></pre>
+      </section>
+
+      <section id="row-expansion">
+        <h2>6. Row Expansion (Accordion Details)</h2>
+        <p>Pass a function to <code>rowExpansion</code> to return extra HTML details when a row is clicked.</p>
+<pre><code>const grid = new NanoGrid('#myTable', {
   data: users,
-  columnDefs: {
-    // Override the 'status' column
-    status: (row) => {
-      const color = row.status === 'Active' ? 'green' : 'gray';
-      return `&lt;span style="color: ${color}; font-weight: bold;"&gt;${row.status}&lt;/span&gt;`;
-    },
-    
-    // Create an entirely custom 'actions' column
-    actions: (row) => `
-      &lt;button onclick="edit(${row.id})"&gt;Edit&lt;/button&gt;
-      &lt;button onclick="del(${row.id})" style="color: red;"&gt;Delete&lt;/button&gt;
-    `
-  }
+  rowExpansion: (row) => `
+    &lt;div style="padding: 1rem;"&gt;
+      &lt;h4&gt;Additional Info for ${row.name}&lt;/h4&gt;
+      &lt;p&gt;Email: ${row.email}&lt;/p&gt;
+    &lt;/div&gt;
+  `
 });</code></pre>
       </section>
 
       <section id="checkboxes">
-        <h2>5. Row Selection (Checkboxes)</h2>
-        <p>NanoGrid can automatically inject a column of checkboxes for bulk actions without any changes to your HTML structure. It persistently tracks selections across paginations.</p>
+        <h2>7. Row Selection (Checkboxes)</h2>
+        <p>NanoGrid persistently tracks selections across paginations.</p>
 <pre><code>const grid = new NanoGrid('#myTable', {
   data: users,
-  checkboxes: true,     // Enables the checkbox column
-  rowIdField: 'uuid'    // Tell NanoGrid which property is the unique ID
+  checkboxes: true,     
+  rowIdField: 'uuid'    
 });
 
-// To retrieve the selected IDs later:
-document.querySelector('#deleteBulk').addEventListener('click', () => {
-  const selectedRows = grid.getSelected();
-  console.log(selectedRows); // e.g., ["uuid-1", "uuid-5"]
+// To retrieve IDs: grid.getSelected();</code></pre>
+      </section>
+
+      <section id="custom-renderers">
+        <h2>8. Custom Columns (Badges & Buttons)</h2>
+<pre><code>new NanoGrid('#myTable', {
+  data: users,
+  columnDefs: {
+    status: (row) => {
+      const color = row.status === 'Active' ? 'green' : 'gray';
+      return `&lt;span style="color: ${color}; font-weight: bold;"&gt;${row.status}&lt;/span&gt;`;
+    },
+    actions: (row) => `&lt;button onclick="del(${row.id})"&gt;Delete&lt;/button&gt;`
+  }
 });</code></pre>
       </section>
 
       <section id="server-side">
-        <h2>6. Server-Side Processing (AJAX)</h2>
-        <p>For large databases, enable <code>serverSide: true</code> and provide an async <code>ajax</code> function. NanoGrid will pass its state (page, sorting, search) to your function and automatically show a loading spinner.</p>
+        <h2>9. Server-Side Processing (AJAX)</h2>
+        <p>Enable <code>serverSide: true</code> and provide an async <code>ajax</code> function. NanoGrid passes its state (page, sorting, search, colFilters) to your backend.</p>
         
 <pre><code>new NanoGrid('#myTable', {
   serverSide: true,
-  pageSize: 10,
   ajax: async (params) => {
-    /* NanoGrid passes current state into 'params':
-       { page: 1, pageSize: 10, search: "john", sortCol: "id", sortDir: "asc" }
+    /* 'params' contains:
+       { page: 1, pageSize: 10, search: "john", sortCol: "id", sortDir: "asc", colFilters: {} }
     */
-    
-    const response = await fetch(`https://api.example.com/users?page=${params.page}&limit=${params.pageSize}&q=${params.search}`);
+    const query = new URLSearchParams(params).toString();
+    const response = await fetch(`/api/users?${query}`);
     const result = await response.json();
     
-    // You MUST return data in this format:
-    return {
-      data: result.items,        // The array of rows
-      total: result.totalCount   // The total rows in DB
-    };
+    // You MUST return this format:
+    return { data: result.data, total: result.total };
   }
 });</code></pre>
       </section>
 
       <section id="exporting">
-        <h2>7. Exporting Data</h2>
-        <p>NanoGrid includes a native export engine that requires zero external libraries.</p>
-        <ul>
-          <li><strong>CSV:</strong> Parses the current dataset and triggers a file download.</li>
-          <li><strong>Excel / Word:</strong> Wraps the HTML table data in an MS Office XML schema.</li>
-          <li><strong>PDF:</strong> Utilizes browser-native print stylesheets to isolate the table, allowing users to save perfectly formatted PDFs directly from the Print dialog.</li>
-        </ul>
-        <div class="note">
-          <strong>Pro Tip:</strong> Columns containing custom HTML (like Action buttons) or Checkboxes are automatically excluded from the exported files to keep your data clean.
-        </div>
+        <h2>10. Exporting Data</h2>
+        <p>NanoGrid includes a native export engine for CSV, Excel, Word, and PDF. Custom columns (buttons) and checkboxes are automatically stripped out of exports to ensure clean data.</p>
+      </section>
+
+      <hr style="margin: 4rem 0; border: 0; border-top: 1px solid var(--border);" />
+
+      <section id="guide-laravel">
+        <h2>11. Integration: Laravel (PHP)</h2>
+        <p>Using NanoGrid's <code>serverSide: true</code> with a Laravel backend is incredibly easy. NanoGrid's payload maps perfectly to Laravel's Eloquent queries and paginators.</p>
+
+        <h3>Controller Example</h3>
+        <p>Here is a copy-paste template for your Laravel Controller to handle global searches, sorting, and pagination.</p>
+<pre><code>&lt;?php
+
+namespace App\Http\Controllers;
+
+use App\Models\User;
+use Illuminate\Http\Request;
+
+class UserController extends Controller
+{
+    public function getGridData(Request $request)
+    {
+        $query = User::query();
+
+        // 1. Handle Global Search
+        if ($search = $request->input('search')) {
+            $query->where(function($q) use ($search) {
+                $q->where('name', 'LIKE', "%{$search}%")
+                  ->orWhere('email', 'LIKE', "%{$search}%");
+            });
+        }
+
+        // 2. Handle Sorting
+        if ($sortCol = $request->input('sortCol')) {
+            $sortDir = $request->input('sortDir', 'asc');
+            $query->orderBy($sortCol, $sortDir);
+        }
+
+        // 3. Handle Pagination
+        $page = $request->input('page', 1);
+        $pageSize = $request->input('pageSize', 10);
+        
+        $paginator = $query->paginate($pageSize, ['*'], 'page', $page);
+
+        // 4. Return NanoGrid's required JSON structure
+        return response()->json([
+            'data' => $paginator->items(),
+            'total' => $paginator->total()
+        ]);
+    }
+}</code></pre>
+      </section>
+
+      <section id="guide-ci4">
+        <h2>12. Integration: CodeIgniter 4 (PHP)</h2>
+        <p>If you are using CodeIgniter 4, you can handle NanoGrid's request using the built-in Query Builder and Pagination engine.</p>
+
+        <h3>Controller Example</h3>
+<pre><code>&lt;?php
+
+namespace App\Controllers;
+
+use App\Models\UserModel;
+
+class UserController extends BaseController
+{
+    public function getGridData()
+    {
+        $model = new UserModel();
+        
+        $search   = $this->request->getGet('search');
+        $sortCol  = $this->request->getGet('sortCol');
+        $sortDir  = $this->request->getGet('sortDir') ?? 'asc';
+        $page     = $this->request->getGet('page') ?? 1;
+        $pageSize = $this->request->getGet('pageSize') ?? 10;
+
+        // 1. Handle Global Search
+        if (!empty($search)) {
+            $model->groupStart()
+                  ->like('name', $search)
+                  ->orLike('email', $search)
+                  ->groupEnd();
+        }
+
+        // 2. Handle Sorting
+        if (!empty($sortCol)) {
+            $model->orderBy($sortCol, $sortDir);
+        }
+
+        // 3. Handle Pagination
+        $data = $model->paginate($pageSize, 'default', $page);
+        $total = $model->pager->getTotal();
+
+        // 4. Return NanoGrid's required JSON structure
+        return $this->response->setJSON([
+            'data' => $data,
+            'total' => $total
+        ]);
+    }
+}</code></pre>
       </section>
 
       <section id="api-methods">
-        <h2>8. Grid API Methods</h2>
-        <p>Once you initialize your grid (e.g., <code>const grid = new NanoGrid(...)</code>), you can control it programmatically using the following methods.</p>
+        <h2>13. Grid API Methods</h2>
+        <p>Control your grid programmatically after initialization.</p>
 
         <h3><code>reload(newData = null, resetPage = true)</code></h3>
-        <p>Refreshes the grid data dynamically without reloading the page. Perfect for after you add, edit, or delete a record.</p>
 <pre><code>// SERVER-SIDE: Triggers a fresh AJAX call
 grid.reload();
 
@@ -372,7 +431,6 @@ grid.reload();
 grid.reload(null, false);
 
 // CLIENT-SIDE: Replaces the table with a new array
-let newArray = [...oldArray, { id: 3, name: "Charlie" }];
 grid.reload(newArray);</code></pre>
 
         <h3><code>getSelected()</code></h3>
@@ -380,19 +438,15 @@ grid.reload(newArray);</code></pre>
 <pre><code>const idsToDelete = grid.getSelected();</code></pre>
 
         <h3><code>showProcessing(text)</code> & <code>hideProcessing()</code></h3>
-        <p>Manually triggers NanoGrid's built-in loading spinner overlay. Useful if you are performing a heavy manual frontend task and want to block table interaction temporarily.</p>
+        <p>Manually triggers NanoGrid's built-in loading spinner overlay.</p>
 <pre><code>grid.showProcessing('Validating records...');
-
-setTimeout(() => {
-  grid.hideProcessing(); // Restores the table view
-}, 2000);</code></pre>
+setTimeout(() => grid.hideProcessing(), 2000);</code></pre>
       </section>
 
     </main>
   </div>
 
   <script>
-    // Simple script to handle sidebar active state based on scrolling
     const sections = document.querySelectorAll('section');
     const navLinks = document.querySelectorAll('.sidebar a');
 
