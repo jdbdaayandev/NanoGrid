@@ -125,6 +125,10 @@
     .note { padding: 1.25rem 1.5rem; background: rgba(0, 123, 255, 0.04); border-left: 4px solid var(--accent); border-radius: 0 12px 12px 0; margin: 2rem 0; font-size: 0.95rem; color: #0056b3; line-height: 1.6; }
     .note strong { color: #004085; }
 
+    /* Button Download */
+    .btn-download { display: inline-flex; align-items: center; gap: 0.5rem; background: var(--accent); color: white; padding: 0.875rem 1.5rem; border-radius: 8px; font-weight: 600; text-decoration: none; transition: all 0.2s; border: 1px solid transparent; margin-bottom: 2rem; box-shadow: 0 4px 6px -1px rgba(0, 123, 255, 0.2); }
+    .btn-download:hover { background: #0056b3; transform: translateY(-2px); box-shadow: 0 6px 15px -3px rgba(0, 123, 255, 0.3); color: white; }
+
     hr { margin: 4rem 0; border: 0; border-top: 1px solid var(--border); }
 
     @media (max-width: 768px) {
@@ -170,7 +174,7 @@
         <li><a href="#sticky-filters">Sticky & Column Filters</a></li>
         <li><a href="#row-expansion">Row Expansion</a></li>
         <li><a href="#checkboxes">Row Checkboxes</a></li>
-        <li><a href="#custom-renderers">Custom HTML Renderers</a></li>
+        <li><a href="#custom-renderers">Custom Renderers</a></li>
       </ul>
       <h4>4. Data & Backend</h4>
       <ul>
@@ -189,6 +193,11 @@
     <main class="content">
       <h1>Documentation</h1>
       <p>A comprehensive, step-by-step guide to mastering NanoGrid—the zero-dependency, enterprise-ready data table.</p>
+
+      <a href="nanogrid.js" download="nanogrid.js" class="btn-download">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+        Download nanogrid.js
+      </a>
 
       <section id="introduction">
         <h2>1. Introduction</h2>
@@ -216,7 +225,7 @@
 
       <section id="installation">
         <h2>Installation</h2>
-        <p>Because NanoGrid is dependency-free, you do not need a package manager. Simply download the <code>nanogrid.js</code> file and include it in your HTML.</p>
+        <p>Because NanoGrid is dependency-free, you do not need a package manager. Simply download the <code>nanogrid.js</code> file using the button above and include it in your HTML.</p>
         
 <pre><code>&lt;!-- Place this before your closing &lt;/body&gt; tag --&gt;
 &lt;script src="/js/nanogrid.js"&gt;&lt;/script&gt;</code></pre>
@@ -277,6 +286,7 @@
             <tr><td><code>searchable</code></td><td>Bool|Array</td><td><code>true</code></td><td>Toggles the global search bar, or limits it to specific column indices (e.g. <code>[0, 1]</code>).</td></tr>
             <tr><td><code>checkboxes</code></td><td>Boolean</td><td><code>false</code></td><td>Injects a checkbox column on the far left for bulk row selection.</td></tr>
             <tr><td><code>rowIdField</code></td><td>String</td><td><code>'id'</code></td><td>The unique key identifier in your JSON data, required for selection and expansion.</td></tr>
+            <tr><td><code>rowExpansion</code></td><td>Function</td><td><code>null</code></td><td>A callback function <code>(row) => HTML</code> that returns a string of HTML for row detail accordions.</td></tr>
             <tr><td><code>serverSide</code></td><td>Boolean</td><td><code>false</code></td><td>Switches the table into AJAX mode, pushing processing to your backend database.</td></tr>
             <tr><td><code>ajax</code></td><td>Str|Obj|Fn</td><td><code>null</code></td><td>The endpoint or configuration object used to fetch data from your server.</td></tr>
           </tbody>
@@ -330,6 +340,38 @@ $query->orderBy($actualDbColumn, 'asc');</code></pre>
 
 &lt;!-- 2. Filterable: Auto-generates a text search input specific to this column --&gt;
 &lt;th data-field="role" data-filter="true"&gt;Role&lt;/th&gt;</code></pre>
+      </section>
+
+      <section id="row-expansion">
+        <h2>Row Expansion (Accordions)</h2>
+        <p>If you have large blocks of text, nested lists, or secondary details that do not fit into a standard column (like a bio or address), you can use the Row Expansion feature. Provide a callback function that returns HTML, and NanoGrid will generate a clickable <code>+</code> toggle for each row.</p>
+<pre><code>const grid = new NanoGrid('#myTable', {
+  data: dataset,
+  rowExpansion: (row) => `
+    &lt;div style="padding: 1rem; background: #f8fafc; border-radius: 8px;"&gt;
+      &lt;h4 style="margin-top:0;"&gt;More about ${row.name}&lt;/h4&gt;
+      &lt;p&gt;Contact Email: ${row.email}&lt;/p&gt;
+      &lt;p&gt;Full Address: ${row.full_address}&lt;/p&gt;
+    &lt;/div&gt;
+  `
+});</code></pre>
+      </section>
+
+      <section id="checkboxes">
+        <h2>Row Checkboxes (Selection)</h2>
+        <p>NanoGrid can automatically inject a column of checkboxes for bulk actions without requiring you to manually write the HTML for it. The grid also intelligently tracks selected rows across different pages.</p>
+        <p>To enable this, set <code>checkboxes: true</code> and ensure you define the <code>rowIdField</code> so the grid knows what unique key to store when a row is checked.</p>
+<pre><code>const grid = new NanoGrid('#myTable', {
+  data: dataset,
+  checkboxes: true,     
+  rowIdField: 'id' // Tells the grid what the primary key is
+});
+
+// Example: Retrieve the selected IDs on a button click
+document.querySelector('#deleteBulk').addEventListener('click', () => {
+  const idsToDelete = grid.getSelected();
+  console.log("Deleting rows:", idsToDelete); // Output: [4, 12, 19]
+});</code></pre>
       </section>
 
       <section id="custom-renderers">
@@ -403,6 +445,21 @@ new NanoGrid('#myTable', {
     }
   }
 });</code></pre>
+      </section>
+
+      <section id="exporting">
+        <h2>Export Engine</h2>
+        <p>NanoGrid includes a powerful, native export engine requiring zero external plugins (No SheetJS, no jsPDF required). The "Export" dropdown automatically appears if <code>exportable: true</code> (which is the default).</p>
+        
+        <ul>
+          <li><strong>Export CSV:</strong> Instantly parses the current dataset, handles comma-separation properly, and triggers a lightweight <code>.csv</code> file download.</li>
+          <li><strong>Export Excel:</strong> Wraps the HTML table data in an MS Office XML schema, outputting a <code>.xls</code> file readable by Microsoft Excel.</li>
+          <li><strong>Print / PDF:</strong> Strips away unnecessary UI elements and triggers the browser's native print dialog, allowing users to save perfectly formatted PDFs.</li>
+        </ul>
+        
+        <div class="note">
+          <strong>Smart Sanitization:</strong> NanoGrid is smart enough to completely strip out columns containing HTML buttons (Action columns), Checkboxes, and Expand toggles during the export process. Your downloaded spreadsheet will only contain pure, clean data!
+        </div>
       </section>
 
       <hr>
