@@ -1,0 +1,244 @@
+/* NanoGrid Beautiful Minimal Theme */
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600&display=swap');
+
+:root {
+  --ng-bg: #ffffff;
+  --ng-surface: #f8fafc; /* Very soft blue-gray for hovers */
+  --ng-border: #e2e8f0;
+  --ng-text-main: #334155;
+  --ng-text-dark: #0f172a;
+  --ng-text-muted: #64748b;
+  --ng-accent: #6366f1; /* Soft Indigo */
+  --ng-accent-ring: rgba(99, 102, 241, 0.15);
+  --ng-radius: 16px;
+  --ng-radius-sm: 10px;
+  --ng-font: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+.nanogrid-container {
+  font-family: var(--ng-font);
+  color: var(--ng-text-main);
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* --- Controls (Search & Dropdown) --- */
+.nanogrid-header-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.nanogrid-search-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 320px;
+}
+
+.nanogrid-search-icon {
+  position: absolute;
+  left: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 18px;
+  height: 18px;
+  color: var(--ng-text-muted);
+  transition: color 0.3s ease;
+}
+
+.nanogrid-search {
+  width: 100%;
+  padding: 0.65rem 1rem 0.65rem 2.75rem;
+  font-size: 0.9rem;
+  font-family: inherit;
+  color: var(--ng-text-dark);
+  background: var(--ng-bg);
+  border: 1px solid var(--ng-border);
+  border-radius: var(--ng-radius-sm);
+  transition: all 0.3s ease;
+  box-sizing: border-box;
+}
+
+.nanogrid-search::placeholder {
+  color: #94a3b8;
+}
+
+.nanogrid-search:focus {
+  outline: none;
+  border-color: var(--ng-accent);
+  box-shadow: 0 0 0 4px var(--ng-accent-ring);
+}
+
+.nanogrid-search:focus + .nanogrid-search-icon {
+  color: var(--ng-accent);
+}
+
+.nanogrid-pagesize-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.875rem;
+  color: var(--ng-text-muted);
+}
+
+.nanogrid-pagesize {
+  padding: 0.4rem 0.75rem;
+  font-size: 0.875rem;
+  font-family: inherit;
+  font-weight: 500;
+  color: var(--ng-text-dark);
+  background: var(--ng-bg);
+  border: 1px solid var(--ng-border);
+  border-radius: var(--ng-radius-sm);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.nanogrid-pagesize:focus {
+  outline: none;
+  border-color: var(--ng-accent);
+  box-shadow: 0 0 0 3px var(--ng-accent-ring);
+}
+
+/* --- The Table Card --- */
+.nanogrid-table-wrapper {
+  overflow-x: auto;
+  background: var(--ng-bg);
+  border: 1px solid var(--ng-border);
+  border-radius: var(--ng-radius);
+  /* A beautiful, soft, diffuse shadow */
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.02), 0 8px 10px -6px rgba(0, 0, 0, 0.01);
+}
+
+.nanogrid-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 0.9rem;
+}
+
+/* Headers */
+.nanogrid-table th {
+  padding: 1rem 1.25rem;
+  font-weight: 600;
+  color: var(--ng-text-dark);
+  border-bottom: 2px solid var(--ng-surface); /* Thicker but softer border */
+  white-space: nowrap;
+  transition: background-color 0.2s ease;
+}
+
+.nanogrid-table th[data-field]:hover {
+  background-color: var(--ng-surface);
+}
+
+.nanogrid-sort-icon {
+  margin-left: 0.5rem;
+  font-size: 0.8rem;
+  color: var(--ng-accent);
+}
+
+/* Body */
+.nanogrid-table td {
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid #f1f5f9;
+  color: var(--ng-text-main);
+}
+
+.nanogrid-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.nanogrid-table tbody tr {
+  transition: background-color 0.2s ease;
+}
+
+.nanogrid-table tbody tr:hover {
+  background-color: var(--ng-surface);
+}
+
+/* --- Footer & Pagination --- */
+.nanogrid-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 0.5rem;
+  font-size: 0.875rem;
+  color: var(--ng-text-muted);
+}
+
+.nanogrid-pagination {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.nanogrid-pagination button {
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  font-family: inherit;
+  font-weight: 500;
+  color: var(--ng-text-dark);
+  background: var(--ng-bg);
+  border: 1px solid var(--ng-border);
+  border-radius: var(--ng-radius-sm);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.nanogrid-pagination button:hover:not(:disabled) {
+  color: var(--ng-accent);
+  border-color: var(--ng-accent);
+  background: #fdfdff;
+}
+
+.nanogrid-pagination button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  background: var(--ng-surface);
+  border-color: var(--ng-border);
+  color: var(--ng-text-muted);
+}
+
+/* Spinner */
+@keyframes ng-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+/* NanoGrid Action Buttons */
+.nanogrid-actions-cell {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.nanogrid-action-btn {
+  background: transparent;
+  border: none;
+  font-family: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0.35rem 0.65rem;
+  border-radius: var(--ng-radius-sm);
+  transition: all 0.2s ease;
+}
+
+.nanogrid-action-btn.edit {
+  color: var(--ng-accent);
+}
+
+.nanogrid-action-btn.edit:hover {
+  background: var(--ng-accent-ring);
+}
+
+.nanogrid-action-btn.delete {
+  color: #ef4444; /* Soft Red */
+}
+
+.nanogrid-action-btn.delete:hover {
+  background: rgba(239, 68, 68, 0.1);
+}
