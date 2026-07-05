@@ -20,6 +20,7 @@ class NanoGrid {
       rowIdField: 'id',          
       fontSize: '0.875rem',      
       processingText: 'Loading...',
+      emptyText: 'Record not found',
       theme: 'light', 
       rowExpansion: null,
       responsive: true 
@@ -187,7 +188,7 @@ class NanoGrid {
       .ng-dropdown-item:hover { background: var(--ng-surface); color: var(--ng-text-dark); }
       .ng-dropdown-item.selected { background: var(--ng-accent-ring); color: var(--ng-accent); }
 
-      .nanogrid-table-wrapper { position: relative; overflow-x: auto; background: var(--ng-bg); border: 1px solid var(--ng-border); border-radius: var(--ng-radius); min-height: 150px; -webkit-overflow-scrolling: touch; }
+      .nanogrid-table-wrapper { position: relative; overflow-x: auto; overflow-y: hidden; background: var(--ng-bg); border: 1px solid var(--ng-border); border-radius: var(--ng-radius); -webkit-overflow-scrolling: touch; }
       
       .ng-loader-overlay { position: absolute; left: 0; right: 0; bottom: 0; background: rgba(255, 255, 255, 0.9); display: flex; align-items: center; justify-content: center; z-index: 50; opacity: 0; visibility: hidden; transition: all 0.2s ease; }
       .ng-dark .ng-loader-overlay { background: rgba(52, 58, 64, 0.9); }
@@ -253,6 +254,9 @@ class NanoGrid {
     this.setupListeners();
     this.renderHeaderArrows();
 
+    // FIXED: I-render ang 0 records na footer bago pa mag-fetch!
+    this.updateFooter();
+
     if (this.config.serverSide) {
       await this.fetchData();
     } else {
@@ -277,6 +281,7 @@ class NanoGrid {
 
     let attempts = 0;
     while (this.table.offsetWidth > this.tableWrapper.offsetWidth && attempts < this.columns.length) {
+      // FIXED: Iniwasan natin ang .ng-empty-row para HINDI itago ng responsive engine ang empty/loader text!
       let targetCol = [...this.columns].reverse().find(c =>
         !c.hidden && !c.responsiveHidden && !c.isCheckbox && !c.isExpand && !c.isAction && !c.sticky
       );
@@ -284,7 +289,7 @@ class NanoGrid {
 
       targetCol.responsiveHidden = true;
       targetCol.element.classList.add('ng-res-hidden');
-      this.table.querySelectorAll(`tbody tr:not(.ng-expanded-row) td:nth-child(${targetCol.index + 1})`).forEach(td => td.classList.add('ng-res-hidden'));
+      this.table.querySelectorAll(`tbody tr:not(.ng-expanded-row):not(.ng-empty-row) td:nth-child(${targetCol.index + 1})`).forEach(td => td.classList.add('ng-res-hidden'));
       attempts++;
     }
 
@@ -297,11 +302,11 @@ class NanoGrid {
       if (shouldShow) {
         expandCol.responsiveHidden = false;
         expandCol.element.classList.remove('ng-res-hidden');
-        this.table.querySelectorAll(`tbody tr:not(.ng-expanded-row) td:nth-child(${expandCol.index + 1})`).forEach(td => td.classList.remove('ng-res-hidden'));
+        this.table.querySelectorAll(`tbody tr:not(.ng-expanded-row):not(.ng-empty-row) td:nth-child(${expandCol.index + 1})`).forEach(td => td.classList.remove('ng-res-hidden'));
       } else {
         expandCol.responsiveHidden = true;
         expandCol.element.classList.add('ng-res-hidden');
-        this.table.querySelectorAll(`tbody tr:not(.ng-expanded-row) td:nth-child(${expandCol.index + 1})`).forEach(td => td.classList.add('ng-res-hidden'));
+        this.table.querySelectorAll(`tbody tr:not(.ng-expanded-row):not(.ng-empty-row) td:nth-child(${expandCol.index + 1})`).forEach(td => td.classList.add('ng-res-hidden'));
       }
     }
 
@@ -483,7 +488,8 @@ class NanoGrid {
   applyColumnVisibility() {
     this.columns.forEach((col, i) => {
       col.element.style.display = col.hidden ? 'none' : '';
-      const cells = this.table.querySelectorAll(`tbody tr:not(.ng-expanded-row) td:nth-child(${i + 1})`);
+      // FIXED: Kasama ang not(.ng-empty-row) sa pag-apply ng visibility
+      const cells = this.table.querySelectorAll(`tbody tr:not(.ng-expanded-row):not(.ng-empty-row) td:nth-child(${i + 1})`);
       cells.forEach(td => td.style.display = col.hidden ? 'none' : '');
     });
     const visibleCols = this.columns.filter(c => !c.hidden && !c.responsiveHidden).length;
@@ -491,13 +497,25 @@ class NanoGrid {
   }
 
   showProcessing(text = this.config.processingText) {
-    const thead = this.table.querySelector('thead');
-    if (thead) {
-      this.overlay.style.top = `${thead.offsetHeight}px`;
+    if (this.state.data.length === 0) {
+      let tbody = this.table.querySelector('tbody');
+      if (!tbody) { tbody = document.createElement('tbody'); this.table.appendChild(tbody); }
+      // FIXED: In-inject ang ng-empty-row class!
+      tbody.innerHTML = `<tr class="ng-empty-row"><td colspan="${this.columns.length}" style="text-align:center; padding: 2rem; color: var(--ng-accent); height: 120px;">
+        <div style="display: flex; align-items: center; justify-content: center; gap: 0.5rem; font-weight: 600;">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="animation: ng-spin 1s linear infinite;"><path d="M21 12a9 9 0 1 1-6.219-8.56"></path></svg>
+          ${text}
+        </div>
+      </td></tr>`;
     } else {
-      this.overlay.style.top = '0px';
+      const thead = this.table.querySelector('thead');
+      if (thead) {
+        this.overlay.style.top = `${thead.offsetHeight}px`;
+      } else {
+        this.overlay.style.top = '0px';
+      }
+      this.tableWrapper.classList.add('is-loading');
     }
-    this.tableWrapper.classList.add('is-loading');
   }
 
   hideProcessing() { 
@@ -511,7 +529,6 @@ class NanoGrid {
     else { if (newData) this.config.data = newData; this.processClientSide(); }
   }
 
-  // --- UPDATED: MERGE CUSTOM PAYLOAD & DATA MAPPING ---
   async fetchData() {
     if (!this.config.ajax) return;
     this.showProcessing(); 
@@ -520,10 +537,10 @@ class NanoGrid {
         page: this.state.page, pageSize: this.state.pageSize, search: this.state.search, colFilters: this.state.colFilters, sortCol: this.state.sortCol, sortDir: this.state.sortDir
       };
 
-      let result;
-
       if (typeof this.config.ajax === 'function') {
-        result = await this.config.ajax(payload);
+        const result = await this.config.ajax(payload);
+        this.state.data = result.data || [];
+        this.state.totalRecords = result.total || 0;
       } else {
         const isString = typeof this.config.ajax === 'string';
         let url = isString ? this.config.ajax : this.config.ajax.url;
@@ -531,7 +548,6 @@ class NanoGrid {
         let headers = isString ? {} : (this.config.ajax.headers || {});
         let customData = isString ? {} : (this.config.ajax.data || {});
 
-        // Merge custom payload data into default pagination payload
         payload = { ...payload, ...customData };
         
         let fetchConfig = { method, headers };
@@ -546,29 +562,37 @@ class NanoGrid {
           url += (url.includes('?') ? '&' : '?') + params.toString();
         } else {
           fetchConfig.headers['Content-Type'] = 'application/json';
+          fetchConfig.headers['Accept'] = 'application/json'; 
           fetchConfig.body = JSON.stringify(payload);
         }
 
         const response = await fetch(url, fetchConfig);
+        
+        if (!response.ok) {
+            throw new Error(`Server HTTP Error ${response.status}`);
+        }
+
         const json = await response.json();
 
-        // Data Mapping Engine
         let dataSrc = isString ? 'data' : (this.config.ajax.dataSrc || 'data');
         let totalSrc = isString ? 'total' : (this.config.ajax.totalSrc || 'total');
 
-        result = {
-           data: json[dataSrc] || [],
-           total: json[totalSrc] || 0
-        };
+        if (!json || !Array.isArray(json[dataSrc])) {
+            throw new Error(`Invalid or missing array at json['${dataSrc}']`);
+        }
+
+        this.state.data = json[dataSrc];
+        this.state.totalRecords = json[totalSrc] || 0;
       }
 
-      this.state.data = result.data;
-      this.state.totalRecords = result.total;
+    } catch (e) {
+      console.error("NanoGrid Backend Error:", e.message);
+      this.state.data = [];
+      this.state.totalRecords = 0;
+      
+    } finally {
       this.renderBody(this.state.data);
       this.updateFooter();
-    } catch (e) {
-      console.error("NanoGrid Fetch Error:", e);
-    } finally {
       this.hideProcessing();
     }
   }
@@ -632,14 +656,16 @@ class NanoGrid {
   }
 
   renderBody(data) {
-    const tbody = this.table.querySelector('tbody');
+    let tbody = this.table.querySelector('tbody');
+    if (!tbody) { tbody = document.createElement('tbody'); this.table.appendChild(tbody); }
     tbody.innerHTML = '';
     
     const selectAllCb = this.container.querySelector('.ng-select-all');
     if (selectAllCb) selectAllCb.checked = false;
 
     if (data.length === 0) {
-      tbody.innerHTML = `<tr><td colspan="${this.columns.length}" style="text-align:center; padding: 4rem 2rem; color: var(--ng-text-muted);">No records found</td></tr>`;
+      // FIXED: In-inject ang ng-empty-row para hind itago ng checkResponsiveness
+      tbody.innerHTML = `<tr class="ng-empty-row"><td colspan="${this.columns.length}" style="text-align:center; padding: 2rem; color: var(--ng-text-muted); height: 120px;">${this.config.emptyText}</td></tr>`;
       return;
     }
 
@@ -688,14 +714,18 @@ class NanoGrid {
 
   updateFooter() {
     const totalPages = Math.ceil(this.state.totalRecords / this.state.pageSize) || 1;
-    if (this.state.page > totalPages) { this.state.page = totalPages; this.processClientSide(); return; }
+    if (this.state.page > totalPages && totalPages > 0) { this.state.page = totalPages; this.processClientSide(); return; }
 
-    const start = (this.state.page - 1) * this.state.pageSize + 1;
+    const start = this.state.totalRecords === 0 ? 0 : (this.state.page - 1) * this.state.pageSize + 1;
     const end = Math.min(this.state.page * this.state.pageSize, this.state.totalRecords);
-    this.container.querySelector('.nanogrid-info').textContent = this.state.totalRecords > 0 ? `Showing ${start} to ${end} of ${this.state.totalRecords}` : '0 results';
+    
+    // FIXED: Format na "Showing 0 to 0 of 0" gaya ng hiling mo
+    this.container.querySelector('.nanogrid-info').textContent = this.state.totalRecords > 0 
+        ? `Showing ${start} to ${end} of ${this.state.totalRecords}` 
+        : 'Showing 0 to 0 of 0';
 
     const pagContainer = this.container.querySelector('.nanogrid-pagination');
-    let pagHtml = `<button class="nanogrid-page-btn" data-page="first" ${this.state.page === 1 ? 'disabled' : ''} title="First Page"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 17l-5-5 5-5M18 17l-5-5 5-5"/></svg></button><button class="nanogrid-page-btn" data-page="prev" ${this.state.page === 1 ? 'disabled' : ''} title="Previous"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg></button>`;
+    let pagHtml = `<button class="nanogrid-page-btn" data-page="first" ${this.state.page <= 1 ? 'disabled' : ''} title="First Page"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 17l-5-5 5-5M18 17l-5-5 5-5"/></svg></button><button class="nanogrid-page-btn" data-page="prev" ${this.state.page <= 1 ? 'disabled' : ''} title="Previous"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg></button>`;
 
     let startPage = Math.max(1, this.state.page - 1);
     let endPage = Math.min(totalPages, this.state.page + 1);
@@ -707,7 +737,7 @@ class NanoGrid {
     for (let i = startPage; i <= endPage; i++) { pagHtml += `<button class="nanogrid-page-btn ${i === this.state.page ? 'active' : ''}" data-page="${i}">${i}</button>`; }
     if (endPage < totalPages) { if (endPage < totalPages - 1) pagHtml += `<span class="nanogrid-page-dots">...</span>`; pagHtml += `<button class="nanogrid-page-btn" data-page="${totalPages}">${totalPages}</button>`; }
 
-    pagHtml += `<button class="nanogrid-page-btn" data-page="next" ${this.state.page === totalPages ? 'disabled' : ''} title="Next"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg></button><button class="nanogrid-page-btn" data-page="last" ${this.state.page === totalPages ? 'disabled' : ''} title="Last Page"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 17l5-5-5-5M6 17l5-5-5-5"/></svg></button>`;
+    pagHtml += `<button class="nanogrid-page-btn" data-page="next" ${this.state.page >= totalPages ? 'disabled' : ''} title="Next"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg></button><button class="nanogrid-page-btn" data-page="last" ${this.state.page >= totalPages ? 'disabled' : ''} title="Last Page"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 17l5-5-5-5M6 17l5-5-5-5"/></svg></button>`;
     pagContainer.innerHTML = pagHtml;
   }
 
